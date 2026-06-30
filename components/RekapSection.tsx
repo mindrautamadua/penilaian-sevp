@@ -3,18 +3,21 @@
 import { useRef, useState, type ReactNode } from "react"
 import type { RekapRow, Summary } from "@/lib/data"
 import { RekapExplorer, type SkorStatus } from "./RekapExplorer"
-import { fmt } from "@/lib/score"
+import { NumberTicker } from "./magicui/number-ticker"
+import { BorderBeam } from "./magicui/border-beam"
 
 function StatCard({
   label,
   value,
+  decimals = 0,
   sub,
   accent,
   active,
   onClick,
 }: {
   label: string
-  value: string
+  value: number | null
+  decimals?: number
   sub?: ReactNode
   accent?: boolean
   active?: boolean
@@ -37,14 +40,17 @@ function StatCard({
           : undefined
       }
       className={[
-        "rounded-2xl p-5 shadow-card ring-1 transition",
+        "relative overflow-hidden rounded-2xl p-5 shadow-card ring-1 transition",
         accent ? "bg-grad-grape-teal text-white" : "bg-white/90 backdrop-blur-sm",
         clickable ? "cursor-pointer hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-steel" : "",
         active ? (accent ? "ring-2 ring-white/60" : "ring-2 ring-primary") : "ring-slate-900/[0.05]",
       ].join(" ")}
     >
+      {accent && <BorderBeam size={70} duration={6} colorFrom="#5EEAD4" colorTo="#ffffff" borderWidth={2} />}
       <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${accent ? "text-white/70" : "text-slate-400"}`}>{label}</p>
-      <p className={`data mt-2 text-3xl font-extrabold tracking-tightest ${accent ? "text-white" : "text-navy"}`}>{value}</p>
+      <p className={`data mt-2 text-3xl font-extrabold tracking-tightest ${accent ? "text-white" : "text-navy"}`}>
+        {value == null ? "—" : <NumberTicker value={value} decimalPlaces={decimals} />}
+      </p>
       {sub && <div className={`mt-1 text-xs ${accent ? "text-white/75" : "text-slate-500"}`}>{sub}</div>}
     </div>
   )
@@ -76,14 +82,14 @@ export function RekapSection({
         <StatCard
           accent
           label="Total Pejabat"
-          value={String(summary.total)}
+          value={summary.total}
           sub={`${summary.pkwt} PKWT · ${summary.pkwtt} PKWTT`}
           active={skorStatus === "ALL"}
           onClick={() => pick("ALL")}
         />
         <StatCard
           label="Sudah Ada Skor"
-          value={String(summary.dinilai)}
+          value={summary.dinilai}
           active={skorStatus === "ADA"}
           onClick={() => pick("ADA")}
           sub={
@@ -105,8 +111,8 @@ export function RekapSection({
             )
           }
         />
-        <StatCard label="Rata-rata Skor" value={fmt(summary.rataRata)} sub={`dari ${summary.dinilai} pejabat dinilai`} />
-        <StatCard label="Jumlah Entitas" value={String(summary.entitas)} sub="penugasan PTPN Group" />
+        <StatCard label="Rata-rata Skor" value={summary.rataRata} decimals={2} sub={`dari ${summary.dinilai} pejabat dinilai`} />
+        <StatCard label="Jumlah Entitas" value={summary.entitas} sub="penugasan PTPN Group" />
       </div>
 
       {children}

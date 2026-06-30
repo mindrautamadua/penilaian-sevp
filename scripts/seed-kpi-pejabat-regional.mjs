@@ -29,6 +29,9 @@ const CONFIG = [
   { sheet: "N1R3", entitas: "PTPN I - Regional 3" },
   { sheet: "N1R4", entitas: "PTPN I - Regional 4" },
   { sheet: "N1R5", entitas: "PTPN I - Regional 5" },
+  { sheet: "N1R7", entitas: "PTPN I - Regional 7" },
+  { sheet: "N1R8", entitas: "PTPN I - Regional 8" },
+  { sheet: "N4R1", entitas: "PTPN IV - Regional 1" },
 ]
 
 const txt = (v) => (v == null ? null : String(v).trim() || null)
@@ -100,16 +103,42 @@ function sheetForJabatan(jabatan, defaultSheet) {
   return WBOOK.Sheets[name] ? name : defaultSheet
 }
 
+// Stint "dipakai" = bagian dari subset penugasan (non-Plt) yang menjumlah ke skor
+// final (rekap) orang itu. Mengabaikan coverage "tdk dipakai" lintas entitas
+// (mis. Iskandar stint R7) tanpa bergantung pada entitas rekap (mis. Maalun rekap null).
+function dipakaiIds(stints, target) {
+  const cand = stints.filter((s) => !/^plt\b/i.test(s.jabatan ?? ""))
+  const n = cand.length
+  let best = null, bestDiff = 0.08 // toleransi akumulasi pembulatan
+  for (let mask = 1; mask < (1 << n); mask++) {
+    let sum = 0; const ids = []
+    for (let i = 0; i < n; i++) if (mask & (1 << i)) { sum += cand[i].skor; ids.push(cand[i].id) }
+    const d = Math.abs(sum - target)
+    if (d < bestDiff) { bestDiff = d; best = ids }
+  }
+  return new Set(best ?? [])
+}
+
 try {
+  // Hitung himpunan stint "dipakai" untuk semua pejabat sekaligus.
+  const rekapRows = await sql`select nama, skor::float8 as skor from rekap where skor is not null`
+  const allKertas = await sql`select id, nama, entitas, jabatan, bulan, skor::float8 as skor from kertas_kerja`
+  const byNama = new Map()
+  for (const k of allKertas) { if (!byNama.has(k.nama)) byNama.set(k.nama, []); byNama.get(k.nama).push(k) }
+  const dipakai = new Set()
+  for (const r of rekapRows) {
+    const set = dipakaiIds(byNama.get(r.nama) ?? [], r.skor)
+    if (set.size === 0 && (byNama.get(r.nama) ?? []).length) console.warn(`! ${r.nama}: tak ada subset stint cocok skor ${r.skor}`)
+    set.forEach((id) => dipakai.add(id))
+  }
+
   let totalRows = 0
   for (const cfg of CONFIG) {
-    const kertas = await sql`
-      select nama, jabatan, bulan, skor::float8 as skor
-      from kertas_kerja where entitas=${cfg.entitas} order by nama`
+    const kertas = allKertas.filter((k) => k.entitas === cfg.entitas)
     await sql`delete from kpi_pejabat where entitas=${cfg.entitas} and tahun=${TAHUN}`
 
     for (const kk of kertas) {
-      if (/^plt\b/i.test(kk.jabatan ?? "")) { console.log(`· lewati Plt: ${kk.nama} (${kk.jabatan})`); continue }
+      if (!dipakai.has(kk.id)) continue // lewati Plt & stint tak dipakai
       const bln = kk.bulan ?? 12
       // Skor stint memakai sheet "rumah" entitas (termasuk stint rangkap lintas-
       // regional — lihat Subagiyo R4: stint SEVP BS R5 di-skor pakai BS sheet N1R4).

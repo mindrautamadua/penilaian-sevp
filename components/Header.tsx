@@ -75,7 +75,7 @@ export async function Header({ active }: { active?: string }) {
   )
 }
 
-// Aurora gradient backdrop ala HCOS (tidak ikut tercetak).
+// Aurora gradient backdrop + MagicUI Particles (tidak ikut tercetak).
 export function Aurora() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden print:hidden">

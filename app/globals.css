@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-paper text-ink font-sans antialiased;
+  /* gradien latar sangat halus → kedalaman lembut ala dashboard premium */
+  background-image:
+    radial-gradient(1200px 600px at 15% -10%, rgba(109, 69, 184, 0.06), transparent 60%),
+    radial-gradient(1000px 500px at 100% 0%, rgba(63, 184, 168, 0.05), transparent 55%);
+  background-attachment: fixed;
+}
+
+/* angka/data pakai monospaced tabular agar rapi & presisi */
+.data { @apply font-mono tabular-nums; font-feature-settings: "tnum" 1, "cv01" 1; letter-spacing: -0.01em; }
+
+/* eyebrow tag konsultan */
+.eyebrow { @apply inline-flex items-center rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]; }
+
+/* heading presisi */
+.h-display { @apply font-sans font-extrabold tracking-tightest text-navy; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes hcos-rise {
+    from { opacity: 0; transform: translateY(14px); filter: blur(2px); }
+    to   { opacity: 1; transform: none; filter: blur(0); }
+  }
+  .anim-rise { animation: hcos-rise 0.7s cubic-bezier(0.32, 0.72, 0, 1) both; }
+  .anim-rise-1 { animation: hcos-rise 0.7s cubic-bezier(0.32, 0.72, 0, 1) 0.06s both; }
+  .anim-rise-2 { animation: hcos-rise 0.7s cubic-bezier(0.32, 0.72, 0, 1) 0.12s both; }
+
+  /* Drift lembut untuk orb aurora — transform-only (GPU-safe) */
+  @keyframes hcos-drift-a { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(46px, -34px, 0) scale(1.08); } }
+  @keyframes hcos-drift-b { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(-40px, 30px, 0) scale(1.1); } }
+  @keyframes hcos-drift-c { 0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); } 50% { transform: translate3d(34px, 40px, 0) scale(0.95); } }
+  .drift-a { animation: hcos-drift-a 22s ease-in-out infinite; will-change: transform; }
+  .drift-b { animation: hcos-drift-b 28s ease-in-out infinite; will-change: transform; }
+  .drift-c { animation: hcos-drift-c 25s ease-in-out infinite; will-change: transform; }
+}
+
+@media print {
+  @page { size: A4; margin: 12mm; }
+  html, body { background: #fff !important; background-image: none !important; }
+  .no-print { display: none !important; }
+  .page-break { break-before: page; }
+  .avoid-break { break-inside: avoid; }
+  .report-shell { max-width: 100% !important; box-shadow: none !important; padding: 0 !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

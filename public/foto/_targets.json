@@ -1,0 +1,560 @@
+[
+ {
+  "nama": "Teddy Yunirman Danas",
+  "jabatan": "Direktur Utama",
+  "entitas": "PTPN I - Supporting Co HO",
+  "slug": "teddy-yunirman-danas"
+ },
+ {
+  "nama": "Fauzi Omar",
+  "jabatan": "Direktur Operasional",
+  "entitas": "PTPN I - Supporting Co HO",
+  "slug": "fauzi-omar"
+ },
+ {
+  "nama": "Landi Rizaldi Mangaweang",
+  "jabatan": "Direktur Pemasaran dan Aset",
+  "entitas": "PTPN I - Supporting Co HO",
+  "slug": "landi-rizaldi-mangaweang"
+ },
+ {
+  "nama": "Doni P Gandamihardja",
+  "jabatan": "Direktur Keuangan dan Manajemen Risiko",
+  "entitas": "PTPN I - Supporting Co HO",
+  "slug": "doni-p-gandamihardja"
+ },
+ {
+  "nama": "Siwi Peni",
+  "jabatan": "Direktur SDM dan TI",
+  "entitas": "PTPN I - Supporting Co HO",
+  "slug": "siwi-peni"
+ },
+ {
+  "nama": "Tio Handoko",
+  "jabatan": "Direktur Hubungan Kelembagaan",
+  "entitas": "PTPN I - Supporting Co HO",
+  "slug": "tio-handoko"
+ },
+ {
+  "nama": "Didik Prasetyo",
+  "jabatan": "Region Head R1",
+  "entitas": "PTPN I - Regional 1",
+  "slug": "didik-prasetyo"
+ },
+ {
+  "nama": "Wispramono Budiman",
+  "jabatan": "SEVP Business Support R1",
+  "entitas": "PTPN I - Regional 1",
+  "slug": "wispramono-budiman"
+ },
+ {
+  "nama": "Ganda Wiatmaja",
+  "jabatan": "SEVP Aset R1",
+  "entitas": "PTPN I - Regional 1",
+  "slug": "ganda-wiatmaja"
+ },
+ {
+  "nama": "Desmanto",
+  "jabatan": "Region Head R2",
+  "entitas": "PTPN I - Regional 2",
+  "slug": "desmanto"
+ },
+ {
+  "nama": "Iyan Heryanto",
+  "jabatan": "SEVP Operation R2",
+  "entitas": "PTPN I - Regional 2",
+  "slug": "iyan-heryanto"
+ },
+ {
+  "nama": "Okta Kurniawan",
+  "jabatan": "SEVP Business Support R2",
+  "entitas": "PTPN I - Regional 2",
+  "slug": "okta-kurniawan"
+ },
+ {
+  "nama": "Pulung Rinandoro",
+  "jabatan": "SEVP Aset R2",
+  "entitas": "PTPN I - Regional 2",
+  "slug": "pulung-rinandoro"
+ },
+ {
+  "nama": "Tri Septiono",
+  "jabatan": "Region Head R3",
+  "entitas": "PTPN I - Regional 3",
+  "slug": "tri-septiono"
+ },
+ {
+  "nama": "Budiyono",
+  "jabatan": "SEVP Operation R3",
+  "entitas": "PTPN I - Regional 3",
+  "slug": "budiyono"
+ },
+ {
+  "nama": "Subagiyo",
+  "jabatan": "Region Head R4",
+  "entitas": "PTPN I - Regional 4",
+  "slug": "subagiyo"
+ },
+ {
+  "nama": "Winarto",
+  "jabatan": "Region Head R5",
+  "entitas": "PTPN I - Regional 5",
+  "slug": "winarto"
+ },
+ {
+  "nama": "Asep Sontani",
+  "jabatan": "SEVP Operation R5",
+  "entitas": "PTPN I - Regional 5",
+  "slug": "asep-sontani"
+ },
+ {
+  "nama": "Benny Sandjaya",
+  "jabatan": "SEVP Business Support R5",
+  "entitas": "PTPN I - Regional 5",
+  "slug": "benny-sandjaya"
+ },
+ {
+  "nama": "Tuhu Bangun",
+  "jabatan": "Regional Head R7",
+  "entitas": "PTPN I - Regional 7",
+  "slug": "tuhu-bangun"
+ },
+ {
+  "nama": "Bambang Agustian",
+  "jabatan": "SEVP Business Support R7",
+  "entitas": "PTPN I - Regional 7",
+  "slug": "bambang-agustian"
+ },
+ {
+  "nama": "Wiyoso",
+  "jabatan": "SEVP Operation R7",
+  "entitas": "PTPN I - Regional 7",
+  "slug": "wiyoso"
+ },
+ {
+  "nama": "Iskandar Dewantara",
+  "jabatan": "SEVP Busines Support R7",
+  "entitas": "PTPN I - Regional 7",
+  "slug": "iskandar-dewantara"
+ },
+ {
+  "nama": "R Tulus Panduwidjaja",
+  "jabatan": "Regional Head R8",
+  "entitas": "PTPN I - Regional 8",
+  "slug": "r-tulus-panduwidjaja"
+ },
+ {
+  "nama": "Maalun Lamau",
+  "jabatan": "SEVP Business Support R8",
+  "entitas": "PTPN I - Regional 8",
+  "slug": "maalun-lamau"
+ },
+ {
+  "nama": "Misran",
+  "jabatan": "SEVP Operation R8",
+  "entitas": "PTPN I - Regional 8",
+  "slug": "misran"
+ },
+ {
+  "nama": "Jatmiko Krisna Santosa",
+  "jabatan": "Direktur Utama",
+  "entitas": "PTPN IV - Palm Co HO",
+  "slug": "jatmiko-krisna-santosa"
+ },
+ {
+  "nama": "Rizal H Damanik",
+  "jabatan": "Direktur Operasional",
+  "entitas": "PTPN IV - Palm Co HO",
+  "slug": "rizal-h-damanik"
+ },
+ {
+  "nama": "Ryanto Wisnuardhy",
+  "jabatan": "Direktur Pemasaran dan Komersial",
+  "entitas": "PTPN IV - Palm Co HO",
+  "slug": "ryanto-wisnuardhy"
+ },
+ {
+  "nama": "Hilda Savitri",
+  "jabatan": "Direktur Keuangan dan Manajemen Risiko",
+  "entitas": "PTPN IV - Palm Co HO",
+  "slug": "hilda-savitri"
+ },
+ {
+  "nama": "Suhendri",
+  "jabatan": "Direktur SDM dan TI",
+  "entitas": "PTPN IV - Palm Co HO",
+  "slug": "suhendri"
+ },
+ {
+  "nama": "Irwan Perangin Angin",
+  "jabatan": "Direktur Hubungan Kelembagaan",
+  "entitas": "PTPN IV - Palm Co HO",
+  "slug": "irwan-perangin-angin"
+ },
+ {
+  "nama": "Ugun Untaryo",
+  "jabatan": "Direktur Strategic dan Sustainability",
+  "entitas": "PTPN IV - Palm Co HO",
+  "slug": "ugun-untaryo"
+ },
+ {
+  "nama": "Rediman Silalahi",
+  "jabatan": "SEVP Operation HO",
+  "entitas": "PTPN IV - Palm Co HO",
+  "slug": "rediman-silalahi"
+ },
+ {
+  "nama": "Rurianto",
+  "jabatan": "Regional Head R1",
+  "entitas": "PTPN IV - Regional 1",
+  "slug": "rurianto"
+ },
+ {
+  "nama": "Budi Susilo",
+  "jabatan": "SEVP Operation I R1",
+  "entitas": "PTPN IV - Regional 1",
+  "slug": "budi-susilo"
+ },
+ {
+  "nama": "Joni Raja Siregar",
+  "jabatan": "SEVP Operation II R1",
+  "entitas": "PTPN IV - Regional 1",
+  "slug": "joni-raja-siregar"
+ },
+ {
+  "nama": "Tengku Rinel",
+  "jabatan": "SEVP Business Support R1",
+  "entitas": "PTPN IV - Regional 1",
+  "slug": "tengku-rinel"
+ },
+ {
+  "nama": "Ahmad Diponegoro",
+  "jabatan": "SEVP Business Support R1",
+  "entitas": "PTPN IV - Regional 1",
+  "slug": "ahmad-diponegoro"
+ },
+ {
+  "nama": "Budi Susanto",
+  "jabatan": "SEVP Business Support R1",
+  "entitas": "PTPN IV - Regional 1",
+  "slug": "budi-susanto"
+ },
+ {
+  "nama": "Sudarma Bhakti Lessan",
+  "jabatan": "Regional Head R2",
+  "entitas": "PTPN IV - Regional 2",
+  "slug": "sudarma-bhakti-lessan"
+ },
+ {
+  "nama": "Dedy Gurning",
+  "jabatan": "SEVP Operation II R2",
+  "entitas": "PTPN IV - Regional 2",
+  "slug": "dedy-gurning"
+ },
+ {
+  "nama": "Arief Subhan Siregar",
+  "jabatan": "SEVP Operation I R2",
+  "entitas": "PTPN IV - Regional 2",
+  "slug": "arief-subhan-siregar"
+ },
+ {
+  "nama": "Mulianto",
+  "jabatan": "SEVP Operation I",
+  "entitas": "PTPN IV - Regional 2",
+  "slug": "mulianto"
+ },
+ {
+  "nama": "Yudhi Cahyadi",
+  "jabatan": "SEVP Operation R3",
+  "entitas": "PTPN IV - Regional 3",
+  "slug": "yudhi-cahyadi"
+ },
+ {
+  "nama": "Bambang Budi Santoso",
+  "jabatan": "SEVP Business Support",
+  "entitas": "PTPN IV - Regional 3",
+  "slug": "bambang-budi-santoso"
+ },
+ {
+  "nama": "Sori Pardomuan Ritonga",
+  "jabatan": "SEVP Operation",
+  "entitas": "PTPN IV - Regional 3",
+  "slug": "sori-pardomuan-ritonga"
+ },
+ {
+  "nama": "Khayamuddin Panjaitan",
+  "jabatan": "Regional Head R4",
+  "entitas": "PTPN IV - Regional 4",
+  "slug": "khayamuddin-panjaitan"
+ },
+ {
+  "nama": "Ospin Sembiring",
+  "jabatan": "Regional Head R4",
+  "entitas": "PTPN IV - Regional 4",
+  "slug": "ospin-sembiring"
+ },
+ {
+  "nama": "Ifri Handi Lubis",
+  "jabatan": "SEVP Business Support R4",
+  "entitas": "PTPN IV - Regional 4",
+  "slug": "ifri-handi-lubis"
+ },
+ {
+  "nama": "Achmedi Akbar",
+  "jabatan": "SEVP Business Support R4",
+  "entitas": "PTPN IV - Regional 4",
+  "slug": "achmedi-akbar"
+ },
+ {
+  "nama": "Darmansyah Siregar",
+  "jabatan": "SEVP Operation I R5",
+  "entitas": "PTPN IV - Regional 5",
+  "slug": "darmansyah-siregar"
+ },
+ {
+  "nama": "Ihsan",
+  "jabatan": "SEVP Operation II R5",
+  "entitas": "PTPN IV - Regional 5",
+  "slug": "ihsan"
+ },
+ {
+  "nama": "Donny Amril",
+  "jabatan": "SEVP Business Support R5",
+  "entitas": "PTPN IV - Regional 5",
+  "slug": "donny-amril"
+ },
+ {
+  "nama": "Syahriadi Siregar",
+  "jabatan": "Region Head R6 Merangkap Business Support",
+  "entitas": "PTPN IV - Regional 6",
+  "slug": "syahriadi-siregar"
+ },
+ {
+  "nama": "Ir Tengku Zein Ichwan",
+  "jabatan": "SEVP Operation R6",
+  "entitas": "PTPN IV - Regional 6",
+  "slug": "ir-tengku-zein-ichwan"
+ },
+ {
+  "nama": "Denny Ramadhan Nasution",
+  "jabatan": "Regional Head R7",
+  "entitas": "PTPN IV - Regional 7",
+  "slug": "denny-ramadhan-nasution"
+ },
+ {
+  "nama": "Oshutri Anwar",
+  "jabatan": "SEVP Business Support R7",
+  "entitas": "PTPN IV - Regional 7",
+  "slug": "oshutri-anwar"
+ },
+ {
+  "nama": "Rina Tanjung",
+  "jabatan": "SEVP Operation R7",
+  "entitas": "PTPN IV - Regional 7",
+  "slug": "rina-tanjung"
+ },
+ {
+  "nama": "Mahmudi",
+  "jabatan": "Direktur Utama",
+  "entitas": "PT SGN",
+  "slug": "mahmudi"
+ },
+ {
+  "nama": "Dodik Ristiawan",
+  "jabatan": "Direktur Operasional",
+  "entitas": "PT SGN",
+  "slug": "dodik-ristiawan"
+ },
+ {
+  "nama": "Hariyanto",
+  "jabatan": "Direktur Keuangan",
+  "entitas": "PT SGN",
+  "slug": "hariyanto"
+ },
+ {
+  "nama": "Affan Safiq",
+  "jabatan": "Direktur SDM dan TI",
+  "entitas": "PT SGN",
+  "slug": "affan-safiq"
+ },
+ {
+  "nama": "Aris Toharisman",
+  "jabatan": "Direktur Hubungan Kelembagaan dan Manajemen Risiko",
+  "entitas": "PT SGN",
+  "slug": "aris-toharisman"
+ },
+ {
+  "nama": "M Fakhrur Rozi",
+  "jabatan": "Direktur Manajemen Risiko",
+  "entitas": "PT SGN",
+  "slug": "m-fakhrur-rozi"
+ },
+ {
+  "nama": "Dimas Eko Prasetyo",
+  "jabatan": "SEVP Operation I / SEVP Strategic Business",
+  "entitas": "PT SGN",
+  "slug": "dimas-eko-prasetyo"
+ },
+ {
+  "nama": "Imam Cipto Suyitno",
+  "jabatan": "SEVP Operation II / SEVP Koordinator KSO",
+  "entitas": "PT SGN",
+  "slug": "imam-cipto-suyitno"
+ },
+ {
+  "nama": "Putu Sukarmen",
+  "jabatan": "SEVP Pengembangan",
+  "entitas": "PT SGN",
+  "slug": "putu-sukarmen"
+ },
+ {
+  "nama": "Febri Ari Marpaung",
+  "jabatan": "SEVP Operasional KSO",
+  "entitas": "PT SGN",
+  "slug": "febri-ari-marpaung"
+ },
+ {
+  "nama": "Iman Yani Harahap",
+  "jabatan": "Direktur",
+  "entitas": "PT RPN",
+  "slug": "iman-yani-harahap"
+ },
+ {
+  "nama": "Tjahjono Herawan",
+  "jabatan": "SEVP Operation I",
+  "entitas": "PT RPN",
+  "slug": "tjahjono-herawan"
+ },
+ {
+  "nama": "Misnawi",
+  "jabatan": "SEVP Operation II",
+  "entitas": "PT RPN",
+  "slug": "misnawi"
+ },
+ {
+  "nama": "Edy Suprianto",
+  "jabatan": "SEVP Business Support",
+  "entitas": "PT RPN",
+  "slug": "edy-suprianto"
+ },
+ {
+  "nama": "Muhammad Edwin Syahputra",
+  "jabatan": "SEVP Riset, Inovasi, dan Sustainability",
+  "entitas": "PT RPN",
+  "slug": "muhammad-edwin-syahputra"
+ },
+ {
+  "nama": "Pranoto Hadi Raharjo",
+  "jabatan": "Direktur",
+  "entitas": "PT LPPAN",
+  "slug": "pranoto-hadi-raharjo"
+ },
+ {
+  "nama": "Pugar Indriawan",
+  "jabatan": "SEVP Operation",
+  "entitas": "PT LPPAN",
+  "slug": "pugar-indriawan"
+ },
+ {
+  "nama": "Sosiawan Hary Kustanto",
+  "jabatan": "SEVP Business Support",
+  "entitas": "PT LPPAN",
+  "slug": "sosiawan-hary-kustanto"
+ },
+ {
+  "nama": "Arif Budiman",
+  "jabatan": "Direktur",
+  "entitas": "PT KINRA",
+  "slug": "arif-budiman"
+ },
+ {
+  "nama": "VT Moses Situmorang",
+  "jabatan": "Direktur",
+  "entitas": "PT KINRA",
+  "slug": "vt-moses-situmorang"
+ },
+ {
+  "nama": "Alwin Abdi",
+  "jabatan": "SEVP Business Support",
+  "entitas": "PT KINRA",
+  "slug": "alwin-abdi"
+ },
+ {
+  "nama": "Kennedy Nasib P. Sibarani",
+  "jabatan": "SEVP Operation",
+  "entitas": "PT KINRA",
+  "slug": "kennedy-nasib-p-sibarani"
+ },
+ {
+  "nama": "Syahrizal Siregar",
+  "jabatan": "Direktur",
+  "entitas": "PT SPMN",
+  "slug": "syahrizal-siregar"
+ },
+ {
+  "nama": "Fauzi Chairul Fitrie",
+  "jabatan": "SEVP Operation",
+  "entitas": "PT SPMN",
+  "slug": "fauzi-chairul-fitrie"
+ },
+ {
+  "nama": "Muhammad Zulham Rambe",
+  "jabatan": "Direktur",
+  "entitas": "PT IKN",
+  "slug": "muhammad-zulham-rambe"
+ },
+ {
+  "nama": "Amalia Nasution",
+  "jabatan": "SEVP Operation",
+  "entitas": "PT IKN",
+  "slug": "amalia-nasution"
+ },
+ {
+  "nama": "Tatan Roswana",
+  "jabatan": "Direktur",
+  "entitas": "PT BIN",
+  "slug": "tatan-roswana"
+ },
+ {
+  "nama": "Dede Kusdiman",
+  "jabatan": "SEVP Operation",
+  "entitas": "PT BIN",
+  "slug": "dede-kusdiman"
+ },
+ {
+  "nama": "Darwin Hasibuan",
+  "jabatan": "Direktur",
+  "entitas": "PT INL",
+  "slug": "darwin-hasibuan"
+ },
+ {
+  "nama": "Rahmanto Amin Jatmiko",
+  "jabatan": "Direktur",
+  "entitas": "PT INL",
+  "slug": "rahmanto-amin-jatmiko"
+ },
+ {
+  "nama": "Ipan Gumara Siahaan",
+  "jabatan": "SEVP Operation",
+  "entitas": "PT INL",
+  "slug": "ipan-gumara-siahaan"
+ },
+ {
+  "nama": "Zulianto",
+  "jabatan": "SEVP Business Support",
+  "entitas": "PT INL",
+  "slug": "zulianto"
+ },
+ {
+  "nama": "M. Iswan Achir",
+  "jabatan": "Direktur",
+  "entitas": "PT KPBN",
+  "slug": "m-iswan-achir"
+ },
+ {
+  "nama": "Indaruwati Trivista Andarini",
+  "jabatan": "SEVP Business Support",
+  "entitas": "PT KPBN",
+  "slug": "indaruwati-trivista-andarini"
+ }
+]

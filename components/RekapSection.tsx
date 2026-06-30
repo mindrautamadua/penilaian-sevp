@@ -3,8 +3,6 @@
 import { useRef, useState, type ReactNode } from "react"
 import type { RekapRow, Summary } from "@/lib/data"
 import { RekapExplorer, type SkorStatus } from "./RekapExplorer"
-import { NumberTicker } from "./magicui/number-ticker"
-import { BorderBeam } from "./magicui/border-beam"
 
 function StatCard({
   label,
@@ -46,10 +44,9 @@ function StatCard({
         active ? (accent ? "ring-2 ring-white/60" : "ring-2 ring-primary") : "ring-slate-900/[0.05]",
       ].join(" ")}
     >
-      {accent && <BorderBeam size={70} duration={6} colorFrom="#5EEAD4" colorTo="#ffffff" borderWidth={2} />}
       <p className={`text-[11px] font-semibold uppercase tracking-[0.14em] ${accent ? "text-white/70" : "text-slate-400"}`}>{label}</p>
       <p className={`data mt-2 text-3xl font-extrabold tracking-tightest ${accent ? "text-white" : "text-navy"}`}>
-        {value == null ? "—" : <NumberTicker value={value} decimalPlaces={decimals} />}
+        {value == null ? "—" : value.toLocaleString("id-ID", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
       </p>
       {sub && <div className={`mt-1 text-xs ${accent ? "text-white/75" : "text-slate-500"}`}>{sub}</div>}
     </div>

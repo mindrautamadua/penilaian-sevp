@@ -34,6 +34,10 @@ const CONFIG = [
   { sheet: "N4R1", entitas: "PTPN IV - Regional 1" },
   { sheet: "N4R2", entitas: "PTPN IV - Regional 2" },
   { sheet: "N4R3", entitas: "PTPN IV - Regional 3" },
+  { sheet: "N4R4", entitas: "PTPN IV - Regional 4" },
+  { sheet: "N4R5", entitas: "PTPN IV - Regional 5" },
+  { sheet: "N4R6", entitas: "PTPN IV - Regional 6" },
+  { sheet: "N4R7", entitas: "PTPN IV - Regional 7" },
 ]
 
 const txt = (v) => (v == null ? null : String(v).trim() || null)
@@ -134,11 +138,13 @@ try {
     set.forEach((id) => dipakai.add(id))
   }
 
+  const COLS = ["nama", "jabatan", "entitas", "tahun", "urut", "perspektif", "indikator", "satuan", "target", "realisasi", "polaritas", "bobot", "capaian", "skor"]
   let totalRows = 0
   for (const cfg of CONFIG) {
     const kertas = allKertas.filter((k) => k.entitas === cfg.entitas)
     await sql`delete from kpi_pejabat where entitas=${cfg.entitas} and tahun=${TAHUN}`
 
+    const rows = []
     for (const kk of kertas) {
       if (!dipakai.has(kk.id)) continue // lewati Plt & stint tak dipakai
       const bln = kk.bulan ?? 12
@@ -155,17 +161,16 @@ try {
         continue
       }
       const role = matches[0]
-      let urut = 0
-      for (const it of items) {
-        urut += 1
-        await sql`
-          insert into kpi_pejabat (nama, jabatan, entitas, tahun, urut, perspektif, indikator, satuan, target, realisasi, polaritas, bobot, capaian, skor)
-          values (${kk.nama}, ${kk.jabatan}, ${cfg.entitas}, ${TAHUN}, ${urut}, ${it.perspektif}, ${it.indikator}, ${it.satuan},
-                  ${it.target}, ${it.realisasi}, ${it.polaritas}, ${it.cols[role].bobot}, ${it.capaian}, ${it.cols[role].skor})`
-      }
-      totalRows += items.length
+      items.forEach((it, i) => rows.push({
+        nama: kk.nama, jabatan: kk.jabatan, entitas: cfg.entitas, tahun: TAHUN, urut: i + 1,
+        perspektif: it.perspektif, indikator: it.indikator, satuan: it.satuan, target: it.target,
+        realisasi: it.realisasi, polaritas: it.polaritas, bobot: it.cols[role].bobot, capaian: it.capaian, skor: it.cols[role].skor,
+      }))
       console.log(`✓ [${cfg.entitas}] ${kk.nama} (${kk.jabatan}) → ${sheetName}/${role} — setahun ${totals[role].toFixed(2)} · ${bln} bln`)
     }
+    // bulk insert (chunk) — jauh lebih cepat dari per-baris
+    for (let i = 0; i < rows.length; i += 500) await sql`insert into kpi_pejabat ${sql(rows.slice(i, i + 500), ...COLS)}`
+    totalRows += rows.length
   }
   console.log(`Selesai. ${totalRows} baris.`)
 } catch (e) {

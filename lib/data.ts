@@ -15,6 +15,7 @@ export type RekapRow = {
   catatan: string | null
   foto: string | null
   lhek: LhekRef | null
+  rangkap: boolean        // menjabat bersamaan: total bulan semua penugasan > 12
 }
 
 export type KertasRow = {
@@ -37,6 +38,21 @@ const n = (v: unknown): number | null => (v == null ? null : Number(v))
 
 type DataOpts = { includeExcluded?: boolean }
 
+// Nama pejabat yang total bulan seluruh penugasannya > 12 → menjabat bersamaan (rangkap).
+async function rangkapSet(): Promise<Set<string>> {
+  if (!db) {
+    return sumBulanOver12((raw.kertas_kerja as { nama: string; bulan: number | null }[]))
+  }
+  const { data } = await db.from("kertas_kerja").select("nama, bulan")
+  return sumBulanOver12((data ?? []) as { nama: string; bulan: number | null }[])
+}
+
+function sumBulanOver12(rows: { nama: string; bulan: number | null }[]): Set<string> {
+  const total = new Map<string, number>()
+  for (const r of rows) total.set(r.nama, (total.get(r.nama) ?? 0) + (Number(r.bulan) || 0))
+  return new Set([...total].filter(([, b]) => b > 12).map(([nama]) => nama))
+}
+
 // ── Pejabat yang dikecualikan dari penilaian ──
 export type ExcludedInfo = { nama: string; alasan: string | null; oleh: string | null; waktu: string }
 
@@ -55,7 +71,7 @@ async function excludedSet(): Promise<Set<string>> {
 
 export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
   if (hasDb && db) {
-    const [res, lhekMap, excluded] = await Promise.all([
+    const [res, lhekMap, excluded, rangkap] = await Promise.all([
       db
         .from("rekap")
         .select("id, no, nama, entitas, jabatan, status, skor, bulan, catatan")
@@ -64,14 +80,16 @@ export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
         .order("no"),
       lhekMapByEntitas(),
       opts.includeExcluded ? Promise.resolve(new Set<string>()) : excludedSet(),
+      rangkapSet(),
     ])
-    const rows = (res.data ?? []) as Omit<RekapRow, "foto" | "lhek">[]
+    const rows = (res.data ?? []) as Omit<RekapRow, "foto" | "lhek" | "rangkap">[]
     return rows
       .filter((r) => opts.includeExcluded || !excluded.has(r.nama))
-      .map((r) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null }))
+      .map((r) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null, rangkap: rangkap.has(r.nama) }))
   }
   // fallback (data.json tanpa id) → id sintetis berurutan
-  return (raw.rekap as Omit<RekapRow, "id" | "foto" | "lhek">[]).map((r, i) => ({ ...r, id: i + 1, skor: n(r.skor), foto: photoFor(r.nama), lhek: null }))
+  const rangkap = await rangkapSet()
+  return (raw.rekap as Omit<RekapRow, "id" | "foto" | "lhek" | "rangkap">[]).map((r, i) => ({ ...r, id: i + 1, skor: n(r.skor), foto: photoFor(r.nama), lhek: null, rangkap: rangkap.has(r.nama) }))
 }
 
 export async function getKertasKerja(opts: DataOpts = {}): Promise<KertasRow[]> {

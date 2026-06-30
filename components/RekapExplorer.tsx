@@ -128,7 +128,12 @@ export function RekapExplorer({
                     <div className="flex items-center gap-3">
                       <Avatar src={r.foto} name={r.nama} size={40} />
                       <div className="min-w-0">
-                        <Link href={`/pejabat/${encodeURIComponent(r.nama)}`} className="font-semibold text-navy hover:text-primary hover:underline">{r.nama}</Link>
+                        <span className="flex items-center gap-1.5">
+                          <Link href={`/pejabat/${encodeURIComponent(r.nama)}`} className="font-semibold text-navy hover:text-primary hover:underline">{r.nama}</Link>
+                          {r.rangkap && (
+                            <span title={`Jabatan rangkap (menjabat bersamaan): ${r.jabatan}`} className="shrink-0 rounded-md bg-amber-50 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-700 ring-1 ring-amber-200">Rangkap</span>
+                          )}
+                        </span>
                         <div className="text-xs text-slate-500">{r.jabatan}</div>
                         {r.catatan && <div className="mt-1 text-[11px] italic text-slate-400">{r.catatan}</div>}
                         <LhekLink lhek={r.lhek} />

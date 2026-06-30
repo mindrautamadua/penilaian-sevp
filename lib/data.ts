@@ -1,4 +1,4 @@
-import { sql, hasDb } from "./db"
+import { db, hasDb } from "./supabase"
 import { photoFor } from "./photos"
 import { lhekMapByEntitas, type LhekRef } from "./lhek"
 import raw from "@/db/data.json"
@@ -41,12 +41,10 @@ type DataOpts = { includeExcluded?: boolean }
 export type ExcludedInfo = { nama: string; alasan: string | null; oleh: string | null; waktu: string }
 
 export async function getExcluded(): Promise<ExcludedInfo[]> {
-  if (!sql) return []
-  try {
-    return await sql<ExcludedInfo[]>`select nama, alasan, oleh, waktu::text from pejabat_excluded order by nama`
-  } catch {
-    return []
-  }
+  if (!db) return []
+  const { data, error } = await db.from("pejabat_excluded").select("nama, alasan, oleh, waktu").order("nama")
+  if (error || !data) return []
+  return data as ExcludedInfo[]
 }
 
 async function excludedSet(): Promise<Set<string>> {
@@ -56,14 +54,18 @@ async function excludedSet(): Promise<Set<string>> {
 // ── Sumber data: PostgreSQL bila tersedia, jika tidak fallback ke db/data.json ──
 
 export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
-  if (hasDb && sql) {
-    const [rows, lhekMap, excluded] = await Promise.all([
-      sql<Omit<RekapRow, "foto" | "lhek">[]>`
-        select id, no, nama, entitas, jabatan, status, skor, bulan, catatan
-        from rekap order by status, entitas nulls last, no`,
+  if (hasDb && db) {
+    const [res, lhekMap, excluded] = await Promise.all([
+      db
+        .from("rekap")
+        .select("id, no, nama, entitas, jabatan, status, skor, bulan, catatan")
+        .order("status")
+        .order("entitas", { ascending: true, nullsFirst: false })
+        .order("no"),
       lhekMapByEntitas(),
       opts.includeExcluded ? Promise.resolve(new Set<string>()) : excludedSet(),
     ])
+    const rows = (res.data ?? []) as Omit<RekapRow, "foto" | "lhek">[]
     return rows
       .filter((r) => opts.includeExcluded || !excluded.has(r.nama))
       .map((r) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null }))
@@ -73,14 +75,16 @@ export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
 }
 
 export async function getKertasKerja(opts: DataOpts = {}): Promise<KertasRow[]> {
-  if (hasDb && sql) {
-    const [rows, lhekMap, excluded] = await Promise.all([
-      sql<Omit<KertasRow, "foto" | "lhek">[]>`
-        select id, no, entitas, nama, jabatan, keterangan, awal::text, akhir::text, hari, bulan, skor
-        from kertas_kerja order by id`,
+  if (hasDb && db) {
+    const [res, lhekMap, excluded] = await Promise.all([
+      db
+        .from("kertas_kerja")
+        .select("id, no, entitas, nama, jabatan, keterangan, awal, akhir, hari, bulan, skor")
+        .order("id"),
       lhekMapByEntitas(),
       opts.includeExcluded ? Promise.resolve(new Set<string>()) : excludedSet(),
     ])
+    const rows = (res.data ?? []) as Omit<KertasRow, "foto" | "lhek">[]
     return rows
       .filter((r) => opts.includeExcluded || !excluded.has(r.nama))
       .map((r) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null }))

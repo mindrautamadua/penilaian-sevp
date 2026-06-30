@@ -1,4 +1,6 @@
-import { sql } from "./db"
+import { db } from "./supabase"
+
+const COLS = "id, judul, tahun, entitas, path, file_name, size_bytes, uploaded_by, uploaded_at"
 
 export type LhekDoc = {
   id: number
@@ -13,14 +15,10 @@ export type LhekDoc = {
 }
 
 export async function listLhek(): Promise<LhekDoc[]> {
-  if (!sql) return []
-  try {
-    return await sql<LhekDoc[]>`
-      select id, judul, tahun, entitas, path, file_name, size_bytes, uploaded_by, uploaded_at::text
-      from lhek_doc order by tahun desc, judul`
-  } catch {
-    return []
-  }
+  if (!db) return []
+  const { data, error } = await db.from("lhek_doc").select(COLS).order("tahun", { ascending: false }).order("judul")
+  if (error || !data) return []
+  return data as LhekDoc[]
 }
 
 export type LhekRef = { id: number; judul: string; tahun: number }
@@ -41,12 +39,13 @@ export async function lhekMapByEntitas(): Promise<Record<string, LhekRef>> {
 // Dokumen LHEK yang mencakup salah satu entitas pada daftar (untuk halaman pejabat).
 export async function lhekForEntitas(list: (string | null)[]): Promise<LhekDoc[]> {
   const ents = Array.from(new Set(list.filter(Boolean))) as string[]
-  if (!sql || ents.length === 0) return []
-  try {
-    return await sql<LhekDoc[]>`
-      select id, judul, tahun, entitas, path, file_name, size_bytes, uploaded_by, uploaded_at::text
-      from lhek_doc where entitas && ${ents} order by tahun desc, judul`
-  } catch {
-    return []
-  }
+  if (!db || ents.length === 0) return []
+  const { data, error } = await db
+    .from("lhek_doc")
+    .select(COLS)
+    .overlaps("entitas", ents)
+    .order("tahun", { ascending: false })
+    .order("judul")
+  if (error || !data) return []
+  return data as LhekDoc[]
 }

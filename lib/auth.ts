@@ -5,7 +5,7 @@
 
 import { randomBytes, scrypt as _scrypt, timingSafeEqual } from "node:crypto"
 import { promisify } from "node:util"
-import { sql } from "./db"
+import { db } from "./supabase"
 
 const scrypt = promisify(_scrypt) as (pw: string, salt: Buffer, len: number) => Promise<Buffer>
 
@@ -39,11 +39,16 @@ async function verifyHash(password: string, stored: string): Promise<boolean> {
 type DbUser = { username: string; name: string; role: Role; password_hash: string }
 
 async function dbUser(username: string): Promise<DbUser | null> {
-  if (!sql) return null
+  if (!db) return null
   try {
-    const rows = await sql<DbUser[]>`
-      select username, name, role, password_hash from app_users where username = ${username} limit 1`
-    return rows[0] ?? null
+    const { data, error } = await db
+      .from("app_users")
+      .select("username, name, role, password_hash")
+      .eq("username", username)
+      .limit(1)
+      .maybeSingle()
+    if (error || !data) return null
+    return data as DbUser
   } catch {
     return null // tabel belum ada / DB down → jatuh ke akun bawaan
   }
@@ -77,11 +82,17 @@ export async function findUser(username: string | undefined | null): Promise<Use
 
 // Simpan password baru (upsert) — membuat baris app_users bila belum ada.
 export async function setPassword(user: User, newPassword: string): Promise<void> {
-  if (!sql) throw new Error("Database tidak tersedia.")
+  if (!db) throw new Error("Database tidak tersedia.")
   const hash = await hashPassword(newPassword)
-  await sql`
-    insert into app_users (username, name, role, password_hash)
-    values (${user.username}, ${user.name}, ${user.role}, ${hash})
-    on conflict (username)
-    do update set password_hash = ${hash}, updated_at = now()`
+  const { error } = await db.from("app_users").upsert(
+    {
+      username: user.username,
+      name: user.name,
+      role: user.role,
+      password_hash: hash,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "username" },
+  )
+  if (error) throw new Error(error.message)
 }

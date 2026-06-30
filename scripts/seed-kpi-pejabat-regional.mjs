@@ -32,6 +32,8 @@ const CONFIG = [
   { sheet: "N1R7", entitas: "PTPN I - Regional 7" },
   { sheet: "N1R8", entitas: "PTPN I - Regional 8" },
   { sheet: "N4R1", entitas: "PTPN IV - Regional 1" },
+  { sheet: "N4R2", entitas: "PTPN IV - Regional 2" },
+  { sheet: "N4R3", entitas: "PTPN IV - Regional 3" },
 ]
 
 const txt = (v) => (v == null ? null : String(v).trim() || null)

@@ -4,7 +4,7 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { verifyCredentials, findUser, setPassword } from "@/lib/auth"
-import { sql } from "@/lib/db"
+import { db } from "@/lib/supabase"
 import { uploadLhek as storageUpload, removeLhek as storageRemove, hasStorage } from "@/lib/storage"
 
 export async function login(formData: FormData) {
@@ -36,7 +36,7 @@ export async function updateRekapSkor(_prev: EditState, formData: FormData): Pro
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang mengubah skor." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
 
   const id = Number(formData.get("id"))
   if (!Number.isInteger(id) || id <= 0) return { ok: false, error: "ID rekap tidak valid." }
@@ -64,12 +64,9 @@ export async function updateRekapSkor(_prev: EditState, formData: FormData): Pro
 
   const catatan = catatanRaw === "" ? null : catatanRaw
 
-  try {
-    const res = await sql`update rekap set skor=${skor}, bulan=${bulan}, catatan=${catatan} where id=${id}`
-    if (res.count === 0) return { ok: false, error: "Baris rekap tidak ditemukan." }
-  } catch (e) {
-    return { ok: false, error: "Gagal menyimpan: " + (e instanceof Error ? e.message : String(e)) }
-  }
+  const { data, error } = await db.from("rekap").update({ skor, bulan, catatan }).eq("id", id).select("id")
+  if (error) return { ok: false, error: "Gagal menyimpan: " + error.message }
+  if (!data || data.length === 0) return { ok: false, error: "Baris rekap tidak ditemukan." }
 
   // halaman force-dynamic, tapi revalidasi untuk jaga-jaga
   revalidatePath("/", "layout")
@@ -81,7 +78,7 @@ export async function updateKertasKerja(_prev: EditState, formData: FormData): P
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang mengubah data." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
 
   const id = Number(formData.get("id"))
   if (!Number.isInteger(id) || id <= 0) return { ok: false, error: "ID penugasan tidak valid." }
@@ -118,12 +115,9 @@ export async function updateKertasKerja(_prev: EditState, formData: FormData): P
 
   const keterangan = keteranganRaw === "" ? null : keteranganRaw
 
-  try {
-    const res = await sql`update kertas_kerja set skor=${skor}, hari=${hari}, bulan=${bulan}, keterangan=${keterangan} where id=${id}`
-    if (res.count === 0) return { ok: false, error: "Baris penugasan tidak ditemukan." }
-  } catch (e) {
-    return { ok: false, error: "Gagal menyimpan: " + (e instanceof Error ? e.message : String(e)) }
-  }
+  const { data, error } = await db.from("kertas_kerja").update({ skor, hari, bulan, keterangan }).eq("id", id).select("id")
+  if (error) return { ok: false, error: "Gagal menyimpan: " + error.message }
+  if (!data || data.length === 0) return { ok: false, error: "Baris penugasan tidak ditemukan." }
 
   revalidatePath("/", "layout")
   return { ok: true, message: "Penugasan tersimpan." }
@@ -134,7 +128,7 @@ export async function changePassword(_prev: EditState, formData: FormData): Prom
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user) return { ok: false, error: "Sesi tidak valid. Silakan masuk ulang." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
 
   const current = String(formData.get("current") ?? "")
   const next = String(formData.get("next") ?? "")
@@ -163,7 +157,7 @@ export async function uploadLhek(_prev: EditState, formData: FormData): Promise<
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang mengunggah dokumen." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
   if (!hasStorage) return { ok: false, error: "Supabase Storage belum dikonfigurasi." }
 
   const judul = String(formData.get("judul") ?? "").trim()
@@ -189,9 +183,10 @@ export async function uploadLhek(_prev: EditState, formData: FormData): Promise<
   try {
     const buf = Buffer.from(await file.arrayBuffer())
     await storageUpload(path, buf, "application/pdf")
-    await sql`
-      insert into lhek_doc (judul, tahun, entitas, path, file_name, size_bytes, uploaded_by)
-      values (${judul}, ${tahun}, ${entitas}, ${path}, ${file.name}, ${file.size}, ${user.username})`
+    const { error } = await db.from("lhek_doc").insert({
+      judul, tahun, entitas, path, file_name: file.name, size_bytes: file.size, uploaded_by: user.username,
+    })
+    if (error) throw new Error(error.message)
   } catch (e) {
     return { ok: false, error: "Gagal mengunggah: " + (e instanceof Error ? e.message : String(e)) }
   }
@@ -205,19 +200,19 @@ export async function uploadLhek(_prev: EditState, formData: FormData): Promise<
 export async function deleteLhek(formData: FormData): Promise<void> {
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
-  if (!user || user.role !== "admin" || !sql) return
+  if (!user || user.role !== "admin" || !db) return
 
   const id = Number(formData.get("id"))
   if (!Number.isInteger(id) || id <= 0) return
 
-  const rows = await sql<{ path: string }[]>`select path from lhek_doc where id=${id}`
-  if (rows[0]) {
+  const { data: doc } = await db.from("lhek_doc").select("path").eq("id", id).maybeSingle()
+  if (doc) {
     try {
-      await storageRemove(rows[0].path)
+      await storageRemove((doc as { path: string }).path)
     } catch {
       // teruskan hapus metadata walau objek storage sudah tidak ada
     }
-    await sql`delete from lhek_doc where id=${id}`
+    await db.from("lhek_doc").delete().eq("id", id)
   }
   revalidatePath("/lhek")
 }
@@ -227,7 +222,7 @@ export async function updateLhekJudul(_prev: EditState, formData: FormData): Pro
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
 
   const id = Number(formData.get("id"))
   if (!Number.isInteger(id) || id <= 0) return { ok: false, error: "ID dokumen tidak valid." }
@@ -245,14 +240,11 @@ export async function updateLhekJudul(_prev: EditState, formData: FormData): Pro
     }
   }
 
-  try {
-    const res = tahun != null
-      ? await sql`update lhek_doc set judul=${judul}, tahun=${tahun} where id=${id}`
-      : await sql`update lhek_doc set judul=${judul} where id=${id}`
-    if (res.count === 0) return { ok: false, error: "Dokumen tidak ditemukan." }
-  } catch (e) {
-    return { ok: false, error: "Gagal menyimpan: " + (e instanceof Error ? e.message : String(e)) }
-  }
+  const patch: { judul: string; tahun?: number } = { judul }
+  if (tahun != null) patch.tahun = tahun
+  const { data, error } = await db.from("lhek_doc").update(patch).eq("id", id).select("id")
+  if (error) return { ok: false, error: "Gagal menyimpan: " + error.message }
+  if (!data || data.length === 0) return { ok: false, error: "Dokumen tidak ditemukan." }
 
   revalidatePath("/lhek")
   revalidatePath("/", "layout")
@@ -265,20 +257,16 @@ export async function excludePejabat(_prev: EditState, formData: FormData): Prom
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
 
   const nama = String(formData.get("nama") ?? "").trim()
   if (!nama) return { ok: false, error: "Nama tidak valid." }
   const alasan = String(formData.get("alasan") ?? "").trim() || null
 
-  try {
-    await sql`
-      insert into pejabat_excluded (nama, alasan, oleh)
-      values (${nama}, ${alasan}, ${user.username})
-      on conflict (nama) do update set alasan = ${alasan}, oleh = ${user.username}, waktu = now()`
-  } catch (e) {
-    return { ok: false, error: "Gagal menyimpan: " + (e instanceof Error ? e.message : String(e)) }
-  }
+  const { error } = await db
+    .from("pejabat_excluded")
+    .upsert({ nama, alasan, oleh: user.username, waktu: new Date().toISOString() }, { onConflict: "nama" })
+  if (error) return { ok: false, error: "Gagal menyimpan: " + error.message }
 
   revalidatePath("/", "layout")
   return { ok: true, message: `${nama} dikecualikan dari penilaian.` }
@@ -288,16 +276,13 @@ export async function includePejabat(_prev: EditState, formData: FormData): Prom
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
 
   const nama = String(formData.get("nama") ?? "").trim()
   if (!nama) return { ok: false, error: "Nama tidak valid." }
 
-  try {
-    await sql`delete from pejabat_excluded where nama = ${nama}`
-  } catch (e) {
-    return { ok: false, error: "Gagal menyimpan: " + (e instanceof Error ? e.message : String(e)) }
-  }
+  const { error } = await db.from("pejabat_excluded").delete().eq("nama", nama)
+  if (error) return { ok: false, error: "Gagal menyimpan: " + error.message }
 
   revalidatePath("/", "layout")
   return { ok: true, message: `${nama} dipulihkan ke penilaian.` }
@@ -310,7 +295,7 @@ export async function createKpiSet(_prev: EditState, formData: FormData): Promis
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
 
   const judul = String(formData.get("judul") ?? "").trim()
   const entitas = formData.getAll("entitas").map((e) => String(e)).filter(Boolean)
@@ -322,13 +307,10 @@ export async function createKpiSet(_prev: EditState, formData: FormData): Promis
     tahun = Number(tahunRaw)
     if (!Number.isInteger(tahun) || tahun < 2000 || tahun > 2100) return { ok: false, error: "Tahun tidak valid." }
   }
-  try {
-    await sql`
-      insert into kpi_kolegial (judul, tahun, entitas) values (${judul}, ${tahun}, ${entitas})
-      on conflict (judul, tahun) do update set entitas = excluded.entitas, updated_at = now()`
-  } catch (e) {
-    return { ok: false, error: "Gagal menyimpan: " + (e instanceof Error ? e.message : String(e)) }
-  }
+  const { error } = await db
+    .from("kpi_kolegial")
+    .upsert({ judul, tahun, entitas, updated_at: new Date().toISOString() }, { onConflict: "judul,tahun" })
+  if (error) return { ok: false, error: "Gagal menyimpan: " + error.message }
   revalidatePath("/lhek")
   return { ok: true, message: "Set KPI tersimpan." }
 }
@@ -336,10 +318,10 @@ export async function createKpiSet(_prev: EditState, formData: FormData): Promis
 export async function deleteKpiSet(formData: FormData): Promise<void> {
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
-  if (!user || user.role !== "admin" || !sql) return
+  if (!user || user.role !== "admin" || !db) return
   const id = Number(formData.get("id"))
   if (!Number.isInteger(id) || id <= 0) return
-  await sql`delete from kpi_kolegial where id=${id}` // item ikut terhapus (cascade)
+  await db.from("kpi_kolegial").delete().eq("id", id) // item ikut terhapus (cascade)
   revalidatePath("/lhek")
 }
 
@@ -359,7 +341,7 @@ export async function saveKpiItems(_prev: EditState, formData: FormData): Promis
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
   if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang." }
-  if (!sql) return { ok: false, error: "Database tidak tersedia." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
 
   const setId = Number(formData.get("set_id"))
   if (!Number.isInteger(setId) || setId <= 0) return { ok: false, error: "Set tidak valid." }
@@ -377,25 +359,32 @@ export async function saveKpiItems(_prev: EditState, formData: FormData): Promis
     return Number.isFinite(x) ? x : null
   }
 
-  try {
-    await sql.begin(async (tx) => {
-      await tx`delete from kpi_item where set_id=${setId}`
-      let urut = 0
-      for (const it of items) {
-        const indikator = String(it.indikator ?? "").trim()
-        if (!indikator) continue
-        urut += 1
-        await tx`
-          insert into kpi_item (set_id, urut, perspektif, indikator, satuan, target, realisasi, polaritas, bobot, skor)
-          values (${setId}, ${urut}, ${it.perspektif?.trim() || null}, ${indikator}, ${it.satuan?.trim() || null},
-                  ${it.target?.toString().trim() || null}, ${it.realisasi?.toString().trim() || null},
-                  ${it.polaritas?.trim() || null}, ${num(it.bobot)}, ${num(it.skor)})`
-      }
-      await tx`update kpi_kolegial set updated_at = now() where id=${setId}`
+  // Ganti total: hapus item lama, sisipkan yang baru (non-atomik — cukup utk edit admin).
+  const rows: Record<string, unknown>[] = []
+  let urut = 0
+  for (const it of items) {
+    const indikator = String(it.indikator ?? "").trim()
+    if (!indikator) continue
+    urut += 1
+    rows.push({
+      set_id: setId, urut,
+      perspektif: it.perspektif?.trim() || null, indikator,
+      satuan: it.satuan?.trim() || null,
+      target: it.target?.toString().trim() || null,
+      realisasi: it.realisasi?.toString().trim() || null,
+      polaritas: it.polaritas?.trim() || null,
+      bobot: num(it.bobot), skor: num(it.skor),
     })
-  } catch (e) {
-    return { ok: false, error: "Gagal menyimpan: " + (e instanceof Error ? e.message : String(e)) }
   }
+
+  const delRes = await db.from("kpi_item").delete().eq("set_id", setId)
+  if (delRes.error) return { ok: false, error: "Gagal menyimpan: " + delRes.error.message }
+  if (rows.length) {
+    const insRes = await db.from("kpi_item").insert(rows)
+    if (insRes.error) return { ok: false, error: "Gagal menyimpan: " + insRes.error.message }
+  }
+  await db.from("kpi_kolegial").update({ updated_at: new Date().toISOString() }).eq("id", setId)
+
   revalidatePath("/lhek")
   revalidatePath(`/lhek/kpi/${setId}`)
   return { ok: true, message: "KPI tersimpan." }

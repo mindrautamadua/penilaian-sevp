@@ -6,6 +6,7 @@ import { ApplyToFinalButton } from "@/components/ApplyToFinalButton"
 import { Avatar } from "@/components/Avatar"
 import { KpiTable } from "@/components/KpiTable"
 import { KpiBreakdownTable } from "@/components/KpiBreakdownTable"
+import { RiwayatPenilaian } from "@/components/RiwayatPenilaian"
 import { findUser } from "@/lib/auth"
 import { getPejabat } from "@/lib/data"
 import { lhekForEntitas } from "@/lib/lhek"
@@ -102,6 +103,9 @@ export async function PejabatDetailView({ nama }: { nama: string }) {
               bulan={single.asg.bulan} catatan={single.rekap.catatan} currentFinal={single.rekap.skor} />
           )}
         </section>
+
+        {/* Riwayat penilaian tahun sebelumnya */}
+        <RiwayatPenilaian rows={data.riwayat} />
 
         {/* Rincian penugasan (kertas kerja) */}
         <section className="mt-7">

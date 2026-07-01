@@ -13,7 +13,8 @@
     "db:seed:kpi": "node scripts/seed-kpi.mjs",
     "db:seed:kpi-pejabat": "node scripts/seed-kpi-pejabat.mjs",
     "db:setup": "node scripts/migrate.mjs && node scripts/seed.mjs",
-    "gen:icons": "node scripts/gen-icons.mjs"
+    "gen:icons": "node scripts/gen-icons.mjs",
+    "db:seed:riwayat": "node scripts/seed-riwayat.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.109.0",

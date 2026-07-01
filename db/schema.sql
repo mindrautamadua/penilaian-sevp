@@ -127,3 +127,18 @@ create index if not exists idx_rekap_entitas on rekap(entitas);
 create index if not exists idx_rekap_status  on rekap(status);
 create index if not exists idx_kk_entitas    on kertas_kerja(entitas);
 create index if not exists idx_kk_nama       on kertas_kerja(nama);
+
+-- Riwayat penilaian kinerja tahun-tahun sebelumnya (per pejabat per tahun).
+create table if not exists riwayat_penilaian (
+  nama       text not null,
+  tahun      int  not null,
+  nilai      numeric(8,2),
+  rating     text,
+  golongan   text,
+  grade      text,
+  perusahaan text,
+  jabatan    text,
+  entitas    text,
+  primary key (nama, tahun)
+);
+create index if not exists idx_riwayat_nama on riwayat_penilaian(nama);

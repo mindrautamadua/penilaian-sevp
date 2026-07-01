@@ -32,6 +32,7 @@ export function RekapExplorer({
   const [entitas, setEntitas] = useState<string>("ALL")
   const [masa, setMasa] = useState<"ALL" | "LT12" | "FULL">("ALL")
   const [verif, setVerif] = useState<"ALL" | "YES" | "NO">("ALL")
+  const [riwayat, setRiwayat] = useState<"ALL" | "YES" | "NO">("ALL")
   const [sort, setSort] = useState<SortKey>("skor-desc")
 
   const filtered = useMemo(() => {
@@ -47,6 +48,8 @@ export function RekapExplorer({
       const verified = !!r.lhek && r.bulan === 12
       if (verif === "YES" && !verified) return false
       if (verif === "NO" && verified) return false
+      if (riwayat === "YES" && !r.hasRiwayat) return false
+      if (riwayat === "NO" && r.hasRiwayat) return false
       if (term && !(`${r.nama} ${r.jabatan ?? ""} ${r.entitas ?? ""}`.toLowerCase().includes(term))) return false
       return true
     })
@@ -59,7 +62,7 @@ export function RekapExplorer({
       }
     })
     return out
-  }, [rows, q, status, entitas, masa, verif, sort, skorStatus])
+  }, [rows, q, status, entitas, masa, verif, riwayat, sort, skorStatus])
 
   return (
     <section className="rounded-3xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm sm:p-6">
@@ -122,6 +125,11 @@ export function RekapExplorer({
           <option value="YES">Terverifikasi</option>
           <option value="NO">Belum terverifikasi</option>
         </select>
+        <select value={riwayat} onChange={(e) => setRiwayat(e.target.value as typeof riwayat)} className="rounded-xl border-0 bg-paper px-3.5 py-2.5 text-sm text-ink shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel">
+          <option value="ALL">Semua Riwayat</option>
+          <option value="YES">Sudah ada riwayat</option>
+          <option value="NO">Belum ada riwayat</option>
+        </select>
         <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="rounded-xl border-0 bg-paper px-3.5 py-2.5 text-sm text-ink shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel">
           <option value="skor-desc">Skor tertinggi</option>
           <option value="skor-asc">Skor terendah</option>
@@ -179,6 +187,19 @@ export function RekapExplorer({
                                 <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                               </svg>
                               {r.bulan} bln
+                            </span>
+                          )}
+                          {r.hasRiwayat ? (
+                            <span title="Ada riwayat penilaian 2023–2024" className="inline-flex shrink-0 text-primary" aria-label="Ada riwayat penilaian">
+                              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" />
+                              </svg>
+                            </span>
+                          ) : (
+                            <span title="Belum ada riwayat penilaian" className="inline-flex shrink-0 text-slate-300" aria-label="Belum ada riwayat penilaian">
+                              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" />
+                              </svg>
                             </span>
                           )}
                         </span>

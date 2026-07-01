@@ -1,6 +1,7 @@
 import { db, hasDb } from "./supabase"
 import { photoFor } from "./photos"
 import { lhekMapByEntitas, type LhekRef } from "./lhek"
+import { getRiwayat, riwayatNamaSet, type RiwayatRow } from "./riwayat"
 import raw from "@/db/data.json"
 
 export type RekapRow = {
@@ -17,6 +18,7 @@ export type RekapRow = {
   lhek: LhekRef | null
   rangkap: boolean        // menjabat bersamaan: total bulan semua penugasan > 12
   kategoriBod: string | null   // override kategori oleh BOD; null = ikuti sistem
+  hasRiwayat: boolean     // punya riwayat penilaian tahun sebelumnya (2023/2024)
 }
 
 export type KertasRow = {
@@ -72,7 +74,7 @@ async function excludedSet(): Promise<Set<string>> {
 
 export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
   if (hasDb && db) {
-    const [res, lhekMap, excluded, rangkap] = await Promise.all([
+    const [res, lhekMap, excluded, rangkap, riwayat] = await Promise.all([
       db
         .from("rekap")
         .select("id, no, nama, entitas, jabatan, status, skor, bulan, catatan, kategori_bod")
@@ -82,15 +84,16 @@ export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
       lhekMapByEntitas(),
       opts.includeExcluded ? Promise.resolve(new Set<string>()) : excludedSet(),
       rangkapSet(),
+      riwayatNamaSet(),
     ])
-    const rows = (res.data ?? []) as (Omit<RekapRow, "foto" | "lhek" | "rangkap" | "kategoriBod"> & { kategori_bod: string | null })[]
+    const rows = (res.data ?? []) as (Omit<RekapRow, "foto" | "lhek" | "rangkap" | "kategoriBod" | "hasRiwayat"> & { kategori_bod: string | null })[]
     return rows
       .filter((r) => opts.includeExcluded || !excluded.has(r.nama))
-      .map(({ kategori_bod, ...r }) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null, rangkap: rangkap.has(r.nama), kategoriBod: kategori_bod ?? null }))
+      .map(({ kategori_bod, ...r }) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null, rangkap: rangkap.has(r.nama), kategoriBod: kategori_bod ?? null, hasRiwayat: riwayat.has(r.nama) }))
   }
   // fallback (data.json tanpa id) → id sintetis berurutan
   const rangkap = await rangkapSet()
-  return (raw.rekap as Omit<RekapRow, "id" | "foto" | "lhek" | "rangkap" | "kategoriBod">[]).map((r, i) => ({ ...r, id: i + 1, skor: n(r.skor), foto: photoFor(r.nama), lhek: null, rangkap: rangkap.has(r.nama), kategoriBod: null }))
+  return (raw.rekap as Omit<RekapRow, "id" | "foto" | "lhek" | "rangkap" | "kategoriBod" | "hasRiwayat">[]).map((r, i) => ({ ...r, id: i + 1, skor: n(r.skor), foto: photoFor(r.nama), lhek: null, rangkap: rangkap.has(r.nama), kategoriBod: null, hasRiwayat: false }))
 }
 
 export async function getKertasKerja(opts: DataOpts = {}): Promise<KertasRow[]> {
@@ -146,19 +149,21 @@ export type PejabatDetail = {
   rekap: RekapRow[]          // umumnya 1; bisa 2 bila ada entri PKWT & PKWTT
   assignments: KertasRow[]   // semua baris kertas kerja milik orang ini
   excluded: boolean          // dikecualikan dari penilaian?
+  riwayat: RiwayatRow[]      // riwayat penilaian tahun-tahun sebelumnya
 }
 
 export async function getPejabat(nama: string): Promise<PejabatDetail | null> {
   // includeExcluded agar detail tetap bisa dibuka meski pejabat dikecualikan
-  const [rekap, kk, exSet] = await Promise.all([
+  const [rekap, kk, exSet, riwayat] = await Promise.all([
     getRekap({ includeExcluded: true }),
     getKertasKerja({ includeExcluded: true }),
     excludedSet(),
+    getRiwayat(nama),
   ])
   const r = rekap.filter((x) => x.nama === nama)
   const a = kk.filter((x) => x.nama === nama)
   if (!r.length && !a.length) return null
-  return { nama, rekap: r, assignments: a, excluded: exSet.has(nama) }
+  return { nama, rekap: r, assignments: a, excluded: exSet.has(nama), riwayat }
 }
 
 // ── Daftar pengelolaan pejabat (semua orang + status dikecualikan) ──

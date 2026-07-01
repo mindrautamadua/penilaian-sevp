@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { setRekapUsulan } from "@/app/actions"
+import { useSaveFlash, SaveTick } from "@/components/SaveTick"
 
 // Sel isian usulan Penilaian 2025 (PHDP / Person Grade). Free-text, simpan
 // saat blur / Enter, optimistik (revert bila gagal). Admin-only untuk edit.
@@ -28,6 +29,7 @@ export function UsulanCell({
   const [val, setVal] = useState(value ?? fallback ?? "")
   const [saved, setSaved] = useState(value ?? "")
   const [saving, setSaving] = useState(false)
+  const { n, on, flash } = useSaveFlash()
 
   // Keterangan perubahan "acuan (terakhir) → keputusan 2025" — hanya bila berbeda.
   const acuan = (fallback ?? "").trim()
@@ -55,7 +57,7 @@ export function UsulanCell({
     setSaving(true)
     const res = await setRekapUsulan(id, field, val)
     setSaving(false)
-    if (res?.ok) setSaved(val)
+    if (res?.ok) { setSaved(val); flash() }
     else setVal(saved) // gagal → kembalikan
   }
 
@@ -63,7 +65,7 @@ export function UsulanCell({
   const usingDefault = val.trim() !== "" && val === (fallback ?? "") && val.trim() !== saved.trim()
 
   return (
-    <span className="inline-flex flex-col items-start gap-0.5">
+    <span className="relative inline-flex flex-col items-start gap-0.5">
       <input
         value={val}
         onChange={(e) => setVal(e.target.value)}
@@ -72,9 +74,10 @@ export function UsulanCell({
         disabled={saving}
         placeholder={placeholder ?? "—"}
         title={usingDefault ? `Default dari ${field === "phdp" ? "Golongan PhDP" : "Person Grade"} terakhir — edit untuk menetapkan keputusan 2025` : undefined}
-        className={`data ${widthClass} rounded-lg bg-paper px-2 py-1 text-[11px] font-semibold ${usingDefault ? "italic text-slate-500" : "text-navy"} shadow-inner ring-1 ring-slate-900/[0.06] placeholder:font-normal placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-steel disabled:opacity-60`}
+        className={`data ${widthClass} rounded-lg bg-paper px-2 py-1 text-[11px] font-semibold ${usingDefault ? "italic text-slate-500" : "text-navy"} shadow-inner ring-1 ring-slate-900/[0.06] placeholder:font-normal placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-steel disabled:opacity-60 ${on ? "saved-ring" : ""}`}
       />
       {perubahan}
+      {on && <SaveTick key={n} />}
     </span>
   )
 }

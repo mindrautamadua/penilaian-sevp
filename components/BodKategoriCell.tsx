@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { setKategoriBod } from "@/app/actions"
 import { band, bandForLabel, DEFAULT_KATEGORI, type Kategori } from "@/lib/score"
+import { useSaveFlash, SaveTick } from "@/components/SaveTick"
 
 // Kolom "Kategori (BOD)" di dashboard. Default mengikuti kategori sistem;
 // admin dapat menyesuaikan sesuai aspirasi BOD via dropdown. Bila pilihan
@@ -25,6 +26,7 @@ export function BodKategoriCell({
 }) {
   const [bod, setBod] = useState<string | null>(kategoriBod)
   const [saving, setSaving] = useState(false)
+  const { n, on, flash } = useSaveFlash()
 
   const sys = band(skor, kategori)
   const eff = bod ? bandForLabel(bod, kategori) : sys
@@ -60,11 +62,12 @@ export function BodKategoriCell({
     setSaving(true)
     const res = await setKategoriBod(id, label, sys.label)
     setSaving(false)
-    if (!res?.ok) setBod(prev) // gagal → kembalikan
+    if (res?.ok) flash()
+    else setBod(prev) // gagal → kembalikan
   }
 
   return (
-    <span className="inline-flex flex-col items-start gap-0.5">
+    <span className="relative inline-flex flex-col items-start gap-0.5">
       <span className="inline-flex items-center gap-1.5">
         <span className={`h-2 w-2 shrink-0 rounded-full ${eff.dot}`} />
         <select
@@ -72,7 +75,7 @@ export function BodKategoriCell({
           value={bod ?? sys.label}
           onChange={onChange}
           disabled={saving}
-          className="max-w-[7.5rem] rounded-lg bg-paper px-2 py-1 text-[11px] font-semibold text-navy shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel disabled:opacity-60"
+          className={`max-w-[7.5rem] rounded-lg bg-paper px-2 py-1 text-[11px] font-semibold text-navy shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel disabled:opacity-60 ${on ? "saved-ring" : ""}`}
         >
           {kategori.map((k) => (
             <option key={k.label} value={k.label}>{k.label}</option>
@@ -80,6 +83,7 @@ export function BodKategoriCell({
         </select>
       </span>
       {perubahan}
+      {on && <SaveTick key={n} />}
     </span>
   )
 }

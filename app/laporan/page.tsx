@@ -3,7 +3,7 @@ import { Header, Aurora } from "@/components/Header"
 import { PrintButton } from "@/components/PrintButton"
 import { getRekap, summarize, indukOf, type RekapRow } from "@/lib/data"
 import { getKategori } from "@/lib/kategori"
-import { band, fmt } from "@/lib/score"
+import { band, bandForLabel, fmt } from "@/lib/score"
 
 export const dynamic = "force-dynamic"
 
@@ -69,20 +69,29 @@ export default async function LaporanPage() {
                   <h3 className="text-sm font-bold text-navy">{entitas}</h3>
                   <span className="text-[11px] uppercase tracking-wide text-slate-400">{indukOf(entitas)}</span>
                 </div>
-                <table className="mt-2 w-full border-collapse text-[13px]">
+                <table className="mt-2 w-full border-collapse text-[12px]">
                   <thead>
-                    <tr className="text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">
+                    <tr className="text-left text-[9px] font-semibold uppercase tracking-[0.1em] text-slate-400">
+                      <th colSpan={5} />
+                      <th colSpan={3} className="border-b border-l border-slate-200 pb-1 pl-2 text-center text-primary">Keputusan Penilaian 2025</th>
+                    </tr>
+                    <tr className="text-left text-[9px] font-semibold uppercase tracking-[0.1em] text-slate-400">
                       <th className="py-1.5 pr-2 font-semibold">Nama</th>
                       <th className="py-1.5 pr-2 font-semibold">Jabatan</th>
                       <th className="py-1.5 pr-2 font-semibold">Status</th>
                       <th className="py-1.5 pr-2 text-right font-semibold">Bln</th>
                       <th className="py-1.5 pr-2 text-right font-semibold">Skor</th>
-                      <th className="py-1.5 font-semibold">Kategori</th>
+                      <th className="py-1.5 pr-2 pl-2 font-semibold border-l border-slate-200">Rating (BOD)</th>
+                      <th className="py-1.5 pr-2 font-semibold">PHDP</th>
+                      <th className="py-1.5 font-semibold">Person Grade</th>
                     </tr>
                   </thead>
                   <tbody>
                     {list.map((r, i) => {
                       const b = band(r.skor, kategori)
+                      const effBod = r.kategoriBod ? bandForLabel(r.kategoriBod, kategori) : b
+                      const phdp = r.phdp ?? r.phdpDefault
+                      const grade = r.personGrade ?? r.personGradeDefault
                       return (
                         <tr key={`${r.no}-${i}`} className="border-t border-slate-100">
                           <td className="py-1.5 pr-2 font-semibold text-navy">{r.nama}</td>
@@ -90,11 +99,17 @@ export default async function LaporanPage() {
                           <td className="py-1.5 pr-2 text-slate-500">{r.status}</td>
                           <td className="py-1.5 pr-2 text-right data text-slate-600">{r.bulan ?? "—"}</td>
                           <td className="py-1.5 pr-2 text-right data font-bold text-navy">{fmt(r.skor)}</td>
-                          <td className="py-1.5">
-                            <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-600">
-                              <span className={`h-2 w-2 rounded-full ${b.dot}`} />{b.label}
-                            </span>
+                          <td className="py-1.5 pr-2 pl-2 border-l border-slate-200">
+                            {r.skor == null ? (
+                              <span className="text-[11px] text-slate-400">—</span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-navy">
+                                <span className={`h-2 w-2 rounded-full ${effBod.dot}`} />{effBod.label}
+                              </span>
+                            )}
                           </td>
+                          <td className="py-1.5 pr-2 data text-slate-700">{phdp || "—"}</td>
+                          <td className="py-1.5 data text-slate-700">{grade || "—"}</td>
                         </tr>
                       )
                     })}

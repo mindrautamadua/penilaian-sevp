@@ -30,6 +30,7 @@ export function RekapExplorer({
   const [status, setStatus] = useState<"ALL" | "PKWT" | "PKWTT">("ALL")
   const [entitas, setEntitas] = useState<string>("ALL")
   const [masa, setMasa] = useState<"ALL" | "LT12" | "FULL">("ALL")
+  const [verif, setVerif] = useState<"ALL" | "YES" | "NO">("ALL")
   const [sort, setSort] = useState<SortKey>("skor-desc")
 
   const filtered = useMemo(() => {
@@ -41,6 +42,10 @@ export function RekapExplorer({
       if (entitas !== "ALL" && r.entitas !== entitas) return false
       if (masa === "LT12" && !(r.bulan != null && r.bulan < 12)) return false
       if (masa === "FULL" && !(r.bulan != null && r.bulan >= 12)) return false
+      // Terverifikasi = ada Evident LHEK & masa jabatan genap 12 bulan.
+      const verified = !!r.lhek && r.bulan === 12
+      if (verif === "YES" && !verified) return false
+      if (verif === "NO" && verified) return false
       if (term && !(`${r.nama} ${r.jabatan ?? ""} ${r.entitas ?? ""}`.toLowerCase().includes(term))) return false
       return true
     })
@@ -53,7 +58,7 @@ export function RekapExplorer({
       }
     })
     return out
-  }, [rows, q, status, entitas, masa, sort, skorStatus])
+  }, [rows, q, status, entitas, masa, verif, sort, skorStatus])
 
   return (
     <section className="rounded-3xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm sm:p-6">
@@ -90,7 +95,7 @@ export function RekapExplorer({
       </div>
 
       {/* Kontrol */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -110,6 +115,11 @@ export function RekapExplorer({
           <option value="ALL">Semua Masa Jabatan</option>
           <option value="LT12">Masa jabatan &lt; 12 bln</option>
           <option value="FULL">Masa jabatan 12 bln penuh</option>
+        </select>
+        <select value={verif} onChange={(e) => setVerif(e.target.value as typeof verif)} className="rounded-xl border-0 bg-paper px-3.5 py-2.5 text-sm text-ink shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel">
+          <option value="ALL">Semua Verifikasi</option>
+          <option value="YES">Terverifikasi</option>
+          <option value="NO">Belum terverifikasi</option>
         </select>
         <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="rounded-xl border-0 bg-paper px-3.5 py-2.5 text-sm text-ink shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel">
           <option value="skor-desc">Skor tertinggi</option>
@@ -144,8 +154,8 @@ export function RekapExplorer({
                       <div className="min-w-0">
                         <span className="flex items-center gap-1.5">
                           <Link href={`/pejabat/${encodeURIComponent(r.nama)}`} className="font-semibold text-navy hover:text-primary hover:underline">{r.nama}</Link>
-                          {r.lhek && (
-                            <span title={`LHEK terverifikasi · ${r.lhek.judul}`} className="inline-flex shrink-0 text-emerald-600" aria-label="LHEK terverifikasi">
+                          {r.lhek && r.bulan === 12 && (
+                            <span title={`Terverifikasi · LHEK ada & masa jabatan genap 12 bulan · ${r.lhek.judul}`} className="inline-flex shrink-0 text-emerald-600" aria-label="Terverifikasi: LHEK ada dan masa jabatan genap 12 bulan">
                               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                                 <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
                                 <path d="m9 12 2 2 4-4" />

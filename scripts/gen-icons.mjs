@@ -4,7 +4,7 @@ import { writeFileSync, mkdirSync } from "node:fs"
 
 const GRAD = `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A1A47"/><stop offset="1" stop-color="#6D45B8"/></linearGradient></defs>`
 
-// Brand mark SEVP: squircle ungu gelap + cincin teal + teks "SEVP".
+// Brand mark RH & SEVP: squircle ungu gelap + cincin teal + teks "RH & SEVP".
 // rx=112 (rounded, favicon/PWA) atau rx=0 (full-bleed utk apple & maskable).
 function mark(rx) {
   const R = 190
@@ -15,8 +15,9 @@ function mark(rx) {
   <circle cx="256" cy="256" r="${R}" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="14"/>
   <circle cx="256" cy="256" r="${R}" fill="none" stroke="#5EEAD4" stroke-width="14" stroke-linecap="round"
     stroke-dasharray="${C}" stroke-dashoffset="${C * 0.28}" transform="rotate(-90 256 256)"/>
-  <text x="256" y="298" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="116" font-weight="800" letter-spacing="-4" fill="#ffffff">SEVP</text>
-  <text x="256" y="356" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="34" font-weight="600" letter-spacing="6" fill="#5EEAD4">2025</text>
+  <text x="256" y="242" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="96" font-weight="800" letter-spacing="-4" fill="#ffffff">RH &amp;</text>
+  <text x="256" y="330" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="96" font-weight="800" letter-spacing="-4" fill="#ffffff">SEVP</text>
+  <text x="256" y="378" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="30" font-weight="600" letter-spacing="6" fill="#5EEAD4">2025</text>
 </svg>`
 }
 

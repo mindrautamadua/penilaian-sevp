@@ -3,6 +3,7 @@ import { cookies } from "next/headers"
 import { logout } from "@/app/actions"
 import { findUser } from "@/lib/auth"
 import { AdminMenu } from "@/components/AdminMenu"
+import { BrandMonogram } from "@/components/BrandMonogram"
 
 const nav = [
   { href: "/", label: "Dashboard" },
@@ -26,11 +27,9 @@ export async function Header({ active }: { active?: string }) {
     <header className="sticky top-0 z-20 border-b border-slate-900/[0.06] bg-paper/80 backdrop-blur-xl no-print">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-3.5">
         <Link href="/" className="flex min-w-0 items-center gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-navy text-[11px] font-bold tracking-tight text-white shadow-soft ring-1 ring-white/10">
-            SEVP
-          </span>
+          <BrandMonogram className="h-9 w-9 shrink-0 bg-navy text-white shadow-soft ring-1 ring-white/10" />
           <span className="min-w-0">
-            <span className="block truncate text-sm font-bold tracking-tight text-navy">Penilaian SEVP</span>
+            <span className="block truncate text-sm font-bold tracking-tight text-navy">Penilaian RH &amp; SEVP</span>
             <span className="block truncate text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
               PTPN Group · Tahun Kinerja 2025
             </span>
@@ -93,6 +92,20 @@ export function Aurora() {
       <div className="drift-b absolute right-[-6%] top-[4%] h-[460px] w-[460px] rounded-full bg-steel/25 blur-[120px]" />
       <div className="drift-c absolute bottom-[-12%] left-[22%] h-[540px] w-[540px] rounded-full bg-violet-400/25 blur-[140px]" />
       <div className="drift-a absolute bottom-[12%] right-[4%] h-[420px] w-[420px] rounded-full bg-mint/25 blur-[120px]" />
+
+      {/* Sheen — pita cahaya diagonal menyapu perlahan melintasi layar */}
+      <div className="absolute -inset-y-1/2 left-0 w-[38%] overflow-visible">
+        <div className="sheen h-full w-full bg-gradient-to-r from-transparent via-white/40 to-transparent blur-2xl" />
+      </div>
+
+      {/* Grain halus — tekstur premium (statis, samar) */}
+      <div
+        className="absolute inset-0 opacity-[0.05] mix-blend-soft-light"
+        style={{
+          backgroundImage:
+            `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        }}
+      />
     </div>
   )
 }

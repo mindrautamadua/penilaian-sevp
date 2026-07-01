@@ -1,4 +1,5 @@
 import { Aurora } from "@/components/Header"
+import { BrandMonogram } from "@/components/BrandMonogram"
 
 // Primitif skeleton (shimmer via kelas .skeleton di globals.css).
 export function Skeleton({ className = "" }: { className?: string }) {
@@ -11,7 +12,7 @@ function HeaderSkeleton() {
     <header className="sticky top-0 z-20 border-b border-slate-900/[0.06] bg-paper/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-3.5">
         <div className="flex items-center gap-3">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-navy text-[11px] font-bold tracking-tight text-white shadow-soft ring-1 ring-white/10">SEVP</span>
+          <BrandMonogram className="h-9 w-9 shrink-0 bg-navy text-white shadow-soft ring-1 ring-white/10" />
           <div>
             <Skeleton className="h-3.5 w-28" />
             <Skeleton className="mt-1.5 h-2.5 w-44" />

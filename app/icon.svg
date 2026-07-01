@@ -4,6 +4,7 @@
   <circle cx="256" cy="256" r="190" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="14"/>
   <circle cx="256" cy="256" r="190" fill="none" stroke="#5EEAD4" stroke-width="14" stroke-linecap="round"
     stroke-dasharray="1193.8052083641214" stroke-dashoffset="334.26545834195406" transform="rotate(-90 256 256)"/>
-  <text x="256" y="298" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="116" font-weight="800" letter-spacing="-4" fill="#ffffff">SEVP</text>
-  <text x="256" y="356" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="34" font-weight="600" letter-spacing="6" fill="#5EEAD4">2025</text>
+  <text x="256" y="242" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="96" font-weight="800" letter-spacing="-4" fill="#ffffff">RH &amp;</text>
+  <text x="256" y="330" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="96" font-weight="800" letter-spacing="-4" fill="#ffffff">SEVP</text>
+  <text x="256" y="378" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="30" font-weight="600" letter-spacing="6" fill="#5EEAD4">2025</text>
 </svg>

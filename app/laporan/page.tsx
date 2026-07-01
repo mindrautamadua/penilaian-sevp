@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Header, Aurora } from "@/components/Header"
 import { PrintButton } from "@/components/PrintButton"
+import { BrandMonogram } from "@/components/BrandMonogram"
 import { getRekap, summarize, indukOf, type RekapRow } from "@/lib/data"
 import { getKategori } from "@/lib/kategori"
 import { band, bandForLabel, fmt } from "@/lib/score"
@@ -45,7 +46,7 @@ export default async function LaporanPage() {
                 <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-navy">Laporan Akhir Penilaian Region Head &amp; SEVP</h1>
                 <p className="mt-1 text-sm text-slate-500">Rekapitulasi skor kinerja — satu skor per pejabat (terbobot masa jabatan)</p>
               </div>
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-navy text-xs font-bold text-white">SEVP</span>
+              <BrandMonogram className="h-12 w-12 shrink-0 bg-navy text-white" />
             </div>
           </header>
 

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Penilaian SEVP — Tahun Kinerja 2025",
-    short_name: "SEVP 2025",
+    name: "Penilaian RH & SEVP — Tahun Kinerja 2025",
+    short_name: "RH & SEVP",
     description: "Penilaian Region Head & SEVP PTPN Group — Tahun Kinerja 2025",
     start_url: "/",
     scope: "/",

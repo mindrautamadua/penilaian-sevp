@@ -77,7 +77,7 @@ export async function PejabatDetailView({ nama }: { nama: string }) {
         <header className="avoid-break flex items-center gap-5 border-b-2 border-navy pb-5">
           <Avatar src={foto} name={data.nama} size={88} className="shadow-soft" />
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Penilaian SEVP · Tahun Kinerja 2025</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Penilaian RH &amp; SEVP · Tahun Kinerja 2025</p>
             <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-navy">{data.nama}</h1>
             <p className="mt-1 text-sm text-slate-500">{entitasUtama}</p>
           </div>

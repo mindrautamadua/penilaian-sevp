@@ -7,11 +7,11 @@ const sans = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-mono", display: "swap" })
 
 export const metadata: Metadata = {
-  title: "Penilaian SEVP — Tahun Kinerja 2025",
+  title: "Penilaian RH & SEVP — Tahun Kinerja 2025",
   description: "Penilaian Region Head & SEVP PTPN Group — Tahun Kinerja 2025",
-  applicationName: "Penilaian SEVP 2025",
+  applicationName: "Penilaian RH & SEVP 2025",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, title: "SEVP 2025", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "RH & SEVP", statusBarStyle: "default" },
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },

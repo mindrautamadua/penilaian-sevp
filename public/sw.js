@@ -3,7 +3,7 @@
 // - aset statis (/icon, /foto, /_next/static): stale-while-revalidate
 // Data dinamis (DB/Supabase, /api) TIDAK di-cache agar selalu terbaru.
 
-const VERSION = "sevp-v1"
+const VERSION = "sevp-v2"
 const STATIC_CACHE = `${VERSION}-static`
 const PAGE_CACHE = `${VERSION}-pages`
 

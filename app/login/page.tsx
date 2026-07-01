@@ -1,5 +1,6 @@
 import { login } from "@/app/actions"
 import { SubmitButton } from "@/components/SubmitButton"
+import { BrandMonogram } from "@/components/BrandMonogram"
 
 export const dynamic = "force-dynamic"
 
@@ -14,9 +15,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)", backgroundSize: "22px 22px" }} />
 
         <div className="relative flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-[11px] font-bold ring-1 ring-white/15">SEVP</div>
+          <BrandMonogram className="h-10 w-10 bg-white/10 text-white ring-1 ring-white/15" />
           <div>
-            <p className="font-semibold">Penilaian SEVP</p>
+            <p className="font-semibold">Penilaian RH &amp; SEVP</p>
             <p className="text-xs text-white/60">PTPN Group · Tahun Kinerja 2025</p>
           </div>
         </div>
@@ -26,16 +27,16 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <p className="mt-3 max-w-sm text-sm text-white/70">Rekapitulasi skor kinerja PTPN Group — terbobot masa jabatan, satu skor per pejabat, siap diekspor PDF.</p>
         </div>
 
-        <p className="relative text-xs text-white/60">© 2025 Penilaian SEVP · PTPN Group.</p>
+        <p className="relative text-xs text-white/60">© 2025 Penilaian RH &amp; SEVP · PTPN Group.</p>
       </aside>
 
       {/* Panel form */}
       <div className="flex items-center justify-center px-6 py-12">
         <div className="anim-rise w-full max-w-sm">
           <div className="mb-8 flex items-center gap-3 lg:hidden">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-navy text-[11px] font-bold text-white">SEVP</div>
+            <BrandMonogram className="h-10 w-10 bg-navy text-white" />
             <div>
-              <p className="font-semibold text-navy">Penilaian SEVP</p>
+              <p className="font-semibold text-navy">Penilaian RH &amp; SEVP</p>
               <p className="text-xs text-slate-500">PTPN Group · 2025</p>
             </div>
           </div>

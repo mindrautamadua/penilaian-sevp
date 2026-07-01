@@ -27,7 +27,9 @@ create table if not exists rekap (
   skor      numeric(8,4),      -- null = skor belum tersedia
   bulan     int,
   catatan   text,
-  kategori_bod text            -- override kategori oleh BOD; null = ikuti kategori sistem
+  kategori_bod text,           -- override kategori oleh BOD; null = ikuti kategori sistem
+  phdp         text,           -- usulan Golongan PhDP 2025
+  person_grade text            -- usulan Person Grade 2025
 );
 
 -- Akun aplikasi: username + password (di-hash scrypt). Sumber kebenaran login

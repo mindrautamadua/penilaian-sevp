@@ -7,6 +7,7 @@ import { band, fmt, barPct, DEFAULT_KATEGORI, type Kategori } from "@/lib/score"
 import { Avatar } from "@/components/Avatar"
 import { LhekLink } from "@/components/LhekLink"
 import { BodKategoriCell } from "@/components/BodKategoriCell"
+import { UsulanCell } from "@/components/UsulanCell"
 import { LinkPending } from "@/components/LinkPending"
 
 type SortKey = "skor-desc" | "skor-asc" | "nama" | "entitas"
@@ -140,16 +141,21 @@ export function RekapExplorer({
 
       {/* Tabel */}
       <div className="mt-5 overflow-x-auto">
-        <table className="w-full min-w-[980px] border-collapse text-sm">
+        <table className="w-full min-w-[920px] border-collapse text-sm">
           <thead>
+            <tr className="text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+              <th colSpan={5} />
+              <th colSpan={3} className="border-b border-l border-slate-900/[0.08] pb-1 pl-3 text-center text-primary">Keputusan Penilaian 2025</th>
+            </tr>
             <tr className="border-b border-slate-900/[0.08] text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-              <th className="py-2.5 pr-3 font-semibold">Nama & Jabatan</th>
+              <th className="py-2.5 pr-3 font-semibold">Nama &amp; Jabatan</th>
               <th className="py-2.5 pr-3 font-semibold">Unit Penilaian</th>
-              <th className="py-2.5 pr-3 font-semibold">Status</th>
               <th className="py-2.5 pr-3 text-right font-semibold">Bulan</th>
               <th className="py-2.5 pr-3 font-semibold">Skor</th>
-              <th className="py-2.5 pr-3 font-semibold">Kategori (Sistem)</th>
-              <th className="py-2.5 font-semibold">Kategori (BOD)</th>
+              <th className="py-2.5 pr-3 font-semibold">Rating (Sistem)</th>
+              <th className="py-2.5 pr-3 pl-3 font-semibold border-l border-slate-900/[0.06]">Rating (BOD)</th>
+              <th className="py-2.5 pr-3 font-semibold">PHDP</th>
+              <th className="py-2.5 font-semibold">Person Grade</th>
             </tr>
           </thead>
           <tbody>
@@ -202,6 +208,7 @@ export function RekapExplorer({
                               </svg>
                             </span>
                           )}
+                          <span className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${r.status === "PKWTT" ? "bg-primary/10 text-primary" : "bg-slate-900/[0.06] text-slate-500"}`}>{r.status}</span>
                         </span>
                         <div className="text-xs text-slate-500">{r.jabatan}</div>
                         {r.catatan && !/^(rangkap|gabungan)/i.test(r.catatan.trim()) && (
@@ -212,14 +219,11 @@ export function RekapExplorer({
                     </div>
                   </td>
                   <td className="py-3 pr-3 text-slate-600">{r.entitas}</td>
-                  <td className="py-3 pr-3">
-                    <span className={`inline-flex rounded-md px-2 py-0.5 text-[11px] font-semibold ${r.status === "PKWTT" ? "bg-primary/10 text-primary" : "bg-slate-900/[0.05] text-slate-500"}`}>{r.status}</span>
-                  </td>
                   <td className="py-3 pr-3 text-right data text-slate-600">{r.bulan ?? "—"}</td>
                   <td className="py-3 pr-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="data w-14 shrink-0 text-right font-bold text-navy">{fmt(r.skor)}</span>
-                      <span className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-900/[0.06]">
+                      <span className="data w-12 shrink-0 text-right font-bold text-navy">{fmt(r.skor)}</span>
+                      <span className="h-1.5 w-12 overflow-hidden rounded-full bg-slate-900/[0.06]">
                         <span className={`block h-full rounded-full ${b.bar}`} style={{ width: `${barPct(r.skor)}%` }} />
                       </span>
                     </div>
@@ -227,14 +231,20 @@ export function RekapExplorer({
                   <td className="py-3 pr-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${b.chip}`}>{b.label}</span>
                   </td>
-                  <td className="py-3">
+                  <td className="py-3 pr-3 pl-3 border-l border-slate-900/[0.06]">
                     <BodKategoriCell id={r.id} skor={r.skor} kategoriBod={r.kategoriBod} kategori={kategori} canEdit={canEdit} />
+                  </td>
+                  <td className="py-3 pr-3">
+                    <UsulanCell id={r.id} field="phdp" value={r.phdp} fallback={r.phdpDefault} canEdit={canEdit} placeholder="—" widthClass="w-16" />
+                  </td>
+                  <td className="py-3">
+                    <UsulanCell id={r.id} field="person_grade" value={r.personGrade} fallback={r.personGradeDefault} canEdit={canEdit} placeholder="—" widthClass="w-12" />
                   </td>
                 </tr>
               )
             })}
             {filtered.length === 0 && (
-              <tr><td colSpan={7} className="py-10 text-center text-sm text-slate-400">Tidak ada data yang cocok dengan filter.</td></tr>
+              <tr><td colSpan={8} className="py-10 text-center text-sm text-slate-400">Tidak ada data yang cocok dengan filter.</td></tr>
             )}
           </tbody>
         </table>

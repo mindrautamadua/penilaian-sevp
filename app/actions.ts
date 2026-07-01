@@ -444,6 +444,20 @@ export async function setKategoriBod(id: number, label: string, sistem: string):
   return { ok: !error }
 }
 
+// Keputusan Penilaian 2025: PHDP (golongan) & Person Grade. Free-text, disimpan
+// per baris rekap. Dipanggil langsung dari klien (optimistik, tanpa revalidate).
+export async function setRekapUsulan(id: number, field: "phdp" | "person_grade", value: string): Promise<{ ok: boolean }> {
+  const store = await cookies()
+  const user = await findUser(store.get("sevp_auth")?.value)
+  if (!user || user.role !== "admin" || !db) return { ok: false }
+  if (!Number.isInteger(id) || id <= 0) return { ok: false }
+  if (field !== "phdp" && field !== "person_grade") return { ok: false }
+
+  const v = value.trim()
+  const { error } = await db.from("rekap").update({ [field]: v === "" ? null : v.slice(0, 40) }).eq("id", id)
+  return { ok: !error }
+}
+
 // ── Kategori skor (Istimewa/Sangat Baik/dst) ──
 type KategoriInput = { label?: string; batasMin?: string | number; warna?: string }
 

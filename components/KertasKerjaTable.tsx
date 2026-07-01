@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import type { KertasRow } from "@/lib/data"
-import { band, fmt } from "@/lib/score"
+import { band, fmt, DEFAULT_KATEGORI, type Kategori } from "@/lib/score"
 import { Avatar } from "@/components/Avatar"
 import { LhekLink } from "@/components/LhekLink"
 
@@ -13,7 +13,7 @@ function tgl(s: string | null) {
   return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })
 }
 
-export function KertasKerjaTable({ rows, entitasList }: { rows: KertasRow[]; entitasList: string[] }) {
+export function KertasKerjaTable({ rows, entitasList, kategori = DEFAULT_KATEGORI }: { rows: KertasRow[]; entitasList: string[]; kategori?: Kategori[] }) {
   const [q, setQ] = useState("")
   const [entitas, setEntitas] = useState("ALL")
 
@@ -60,7 +60,7 @@ export function KertasKerjaTable({ rows, entitasList }: { rows: KertasRow[]; ent
           </thead>
           <tbody>
             {filtered.map((r, i) => {
-              const b = band(r.skor)
+              const b = band(r.skor, kategori)
               return (
                 <tr key={`${r.no}-${i}`} className="border-b border-slate-900/[0.05] align-top transition-colors hover:bg-paper/70">
                   <td className="py-3 pr-3 data text-slate-400">{r.no ?? "—"}</td>

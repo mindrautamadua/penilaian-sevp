@@ -16,6 +16,7 @@ export type RekapRow = {
   foto: string | null
   lhek: LhekRef | null
   rangkap: boolean        // menjabat bersamaan: total bulan semua penugasan > 12
+  kategoriBod: string | null   // override kategori oleh BOD; null = ikuti sistem
 }
 
 export type KertasRow = {
@@ -74,7 +75,7 @@ export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
     const [res, lhekMap, excluded, rangkap] = await Promise.all([
       db
         .from("rekap")
-        .select("id, no, nama, entitas, jabatan, status, skor, bulan, catatan")
+        .select("id, no, nama, entitas, jabatan, status, skor, bulan, catatan, kategori_bod")
         .order("status")
         .order("entitas", { ascending: true, nullsFirst: false })
         .order("no"),
@@ -82,14 +83,14 @@ export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
       opts.includeExcluded ? Promise.resolve(new Set<string>()) : excludedSet(),
       rangkapSet(),
     ])
-    const rows = (res.data ?? []) as Omit<RekapRow, "foto" | "lhek" | "rangkap">[]
+    const rows = (res.data ?? []) as (Omit<RekapRow, "foto" | "lhek" | "rangkap" | "kategoriBod"> & { kategori_bod: string | null })[]
     return rows
       .filter((r) => opts.includeExcluded || !excluded.has(r.nama))
-      .map((r) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null, rangkap: rangkap.has(r.nama) }))
+      .map(({ kategori_bod, ...r }) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null, rangkap: rangkap.has(r.nama), kategoriBod: kategori_bod ?? null }))
   }
   // fallback (data.json tanpa id) → id sintetis berurutan
   const rangkap = await rangkapSet()
-  return (raw.rekap as Omit<RekapRow, "id" | "foto" | "lhek" | "rangkap">[]).map((r, i) => ({ ...r, id: i + 1, skor: n(r.skor), foto: photoFor(r.nama), lhek: null, rangkap: rangkap.has(r.nama) }))
+  return (raw.rekap as Omit<RekapRow, "id" | "foto" | "lhek" | "rangkap" | "kategoriBod">[]).map((r, i) => ({ ...r, id: i + 1, skor: n(r.skor), foto: photoFor(r.nama), lhek: null, rangkap: rangkap.has(r.nama), kategoriBod: null }))
 }
 
 export async function getKertasKerja(opts: DataOpts = {}): Promise<KertasRow[]> {

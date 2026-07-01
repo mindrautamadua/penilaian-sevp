@@ -15,6 +15,7 @@ import { lhekForEntitas } from "@/lib/lhek"
 import { kpiForEntitas, kpiPejabat } from "@/lib/kpi"
 import { photoFor } from "@/lib/photos"
 import { fmt } from "@/lib/score"
+import { getKategori } from "@/lib/kategori"
 
 export const dynamic = "force-dynamic"
 
@@ -28,10 +29,11 @@ export default async function PejabatPage({ params }: { params: Promise<{ nama: 
 
   const entitasUtama = data.rekap[0]?.entitas ?? data.assignments[0]?.entitas ?? null
   const entitasAll = [...data.rekap.map((r) => r.entitas), ...data.assignments.map((a) => a.entitas)]
-  const [lhekDocs, kpiSets, kpiBreakdown] = await Promise.all([
+  const [lhekDocs, kpiSets, kpiBreakdown, kategori] = await Promise.all([
     lhekForEntitas(entitasAll),
     kpiForEntitas(entitasAll),
     kpiPejabat(data.nama),
+    getKategori(),
   ])
 
   // Kelompokkan breakdown per (entitas, jabatan) — satu orang bisa menjabat di beberapa entitas.
@@ -102,7 +104,7 @@ export default async function PejabatPage({ params }: { params: Promise<{ nama: 
                 <p className="text-sm text-slate-400">Tidak ada entri rekap untuk pejabat ini.</p>
               )}
               {data.rekap.map((r) => (
-                <EditSkorForm key={r.id} canEdit={canEdit}
+                <EditSkorForm key={r.id} canEdit={canEdit} kategori={kategori}
                   row={{ id: r.id, skor: r.skor, bulan: r.bulan, catatan: r.catatan, jabatan: r.jabatan, status: r.status }} />
               ))}
             </div>

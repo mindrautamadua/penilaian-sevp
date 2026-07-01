@@ -1,6 +1,12 @@
 import type { Config } from "tailwindcss"
 const config: Config = {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
+  // Palet kategori skor (lib/score.ts) dibangun dinamis → pastikan selalu ter-generate.
+  safelist: [
+    {
+      pattern: /(bg|text|ring)-(emerald|cyan|sky|indigo|purple|fuchsia|amber|orange|rose|slate)-(50|100|200|300|400|500|700)/,
+    },
+  ],
   theme: {
     extend: {
       colors: {

@@ -251,6 +251,40 @@ export async function updateLhekJudul(_prev: EditState, formData: FormData): Pro
   return { ok: true, message: "Judul tersimpan." }
 }
 
+// ── Rincian Realisasi Capaian KPI per entitas ──
+// Ubah realisasi (& % capaian) satu indikator pada satu entitas → berlaku ke
+// semua baris pejabat di entitas itu (nilai realisasi bersifat per-entitas).
+export async function updateKpiRealisasi(_prev: EditState, formData: FormData): Promise<EditState> {
+  const store = await cookies()
+  const user = await findUser(store.get("sevp_auth")?.value)
+  if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
+
+  const entitas = String(formData.get("entitas") ?? "").trim()
+  const indikator = String(formData.get("indikator") ?? "").trim()
+  if (!entitas || !indikator) return { ok: false, error: "Entitas/indikator tidak valid." }
+
+  const val = (k: string) => {
+    const v = String(formData.get(k) ?? "").trim()
+    return v === "" ? null : v
+  }
+  const realisasi = val("realisasi")
+  const capaian = val("capaian")
+
+  const { data, error } = await db
+    .from("kpi_pejabat")
+    .update({ realisasi, capaian })
+    .eq("entitas", entitas)
+    .eq("indikator", indikator)
+    .eq("tahun", 2025)
+    .select("id")
+  if (error) return { ok: false, error: "Gagal menyimpan: " + error.message }
+  if (!data || data.length === 0) return { ok: false, error: "Indikator tidak ditemukan." }
+
+  revalidatePath("/", "layout")
+  return { ok: true, message: `Tersimpan (${data.length} baris pejabat).` }
+}
+
 // ── Pengelolaan pejabat (exclude/include dari penilaian) ──
 
 export async function excludePejabat(_prev: EditState, formData: FormData): Promise<EditState> {
@@ -388,4 +422,61 @@ export async function saveKpiItems(_prev: EditState, formData: FormData): Promis
   revalidatePath("/lhek")
   revalidatePath(`/lhek/kpi/${setId}`)
   return { ok: true, message: "KPI tersimpan." }
+}
+
+// Set/hapus override kategori BOD untuk satu baris rekap. Hanya admin.
+// label kosong = ikuti kategori sistem (kolom di-null-kan).
+export async function setKategoriBod(formData: FormData): Promise<void> {
+  const store = await cookies()
+  const user = await findUser(store.get("sevp_auth")?.value)
+  if (!user || user.role !== "admin" || !db) return
+
+  const id = Number(formData.get("id"))
+  if (!Number.isInteger(id) || id <= 0) return
+
+  const label = String(formData.get("label") ?? "").trim()
+  const sistem = String(formData.get("sistem") ?? "").trim()
+  // kosong atau sama dengan kategori sistem → hapus override (kembali ikut sistem)
+  const value = label === "" || label === sistem ? null : label
+  await db.from("rekap").update({ kategori_bod: value }).eq("id", id)
+
+  revalidatePath("/", "layout")
+}
+
+// ── Kategori skor (Istimewa/Sangat Baik/dst) ──
+type KategoriInput = { label?: string; batasMin?: string | number; warna?: string }
+
+// Simpan ulang seluruh kategori skor (ganti total). Hanya admin.
+export async function saveKategori(_prev: EditState, formData: FormData): Promise<EditState> {
+  const store = await cookies()
+  const user = await findUser(store.get("sevp_auth")?.value)
+  if (!user || user.role !== "admin") return { ok: false, error: "Tidak berwenang." }
+  if (!db) return { ok: false, error: "Database tidak tersedia." }
+
+  let items: KategoriInput[]
+  try {
+    items = JSON.parse(String(formData.get("payload") ?? "[]"))
+  } catch {
+    return { ok: false, error: "Data tidak valid." }
+  }
+
+  const rows: Record<string, unknown>[] = []
+  let urut = 0
+  for (const it of items) {
+    const label = String(it.label ?? "").trim()
+    if (!label) continue
+    const min = Number(String(it.batasMin ?? "").toString().replace(",", "."))
+    if (!Number.isFinite(min)) return { ok: false, error: `Batas untuk "${label}" tidak valid.` }
+    urut += 10
+    rows.push({ urut, label, batas_min: min, warna: (it.warna ?? "slate").trim() || "slate" })
+  }
+  if (rows.length === 0) return { ok: false, error: "Minimal satu kategori." }
+
+  const del = await db.from("skor_kategori").delete().gte("id", 0)
+  if (del.error) return { ok: false, error: "Gagal menyimpan: " + del.error.message }
+  const ins = await db.from("skor_kategori").insert(rows)
+  if (ins.error) return { ok: false, error: "Gagal menyimpan: " + ins.error.message }
+
+  revalidatePath("/", "layout")
+  return { ok: true, message: "Kategori skor tersimpan." }
 }

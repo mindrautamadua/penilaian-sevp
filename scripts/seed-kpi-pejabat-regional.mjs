@@ -53,7 +53,8 @@ function parseSheet(sheet) {
   F.forEach((r, i) => r.forEach((c, j) => {
     const s = String(c ?? "").trim()
     if (s === "RH Skor") hi = i
-    if (s === "Realisasi 2025" && realCol < 0) realCol = j
+    // N1 pakai "Realisasi 2025"; N4 pakai "Realisasi 2025 (s.d Des)" → cocokkan prefix
+    if (s.startsWith("Realisasi 2025") && realCol < 0) realCol = j
   }))
   if (hi < 0) throw new Error(`${sheet}: header cascade tak ditemukan`)
 

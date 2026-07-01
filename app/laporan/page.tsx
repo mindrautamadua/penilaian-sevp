@@ -2,12 +2,13 @@ import Link from "next/link"
 import { Header, Aurora } from "@/components/Header"
 import { PrintButton } from "@/components/PrintButton"
 import { getRekap, summarize, indukOf, type RekapRow } from "@/lib/data"
+import { getKategori } from "@/lib/kategori"
 import { band, fmt } from "@/lib/score"
 
 export const dynamic = "force-dynamic"
 
 export default async function LaporanPage() {
-  const rows = await getRekap()
+  const [rows, kategori] = await Promise.all([getRekap(), getKategori()])
   const s = summarize(rows)
 
   // kelompokkan per entitas (urut entitas, lalu skor tertinggi)
@@ -81,7 +82,7 @@ export default async function LaporanPage() {
                   </thead>
                   <tbody>
                     {list.map((r, i) => {
-                      const b = band(r.skor)
+                      const b = band(r.skor, kategori)
                       return (
                         <tr key={`${r.no}-${i}`} className="border-t border-slate-100">
                           <td className="py-1.5 pr-2 font-semibold text-navy">{r.nama}</td>

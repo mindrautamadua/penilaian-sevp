@@ -3,9 +3,10 @@
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import type { RekapRow } from "@/lib/data"
-import { band, fmt, barPct } from "@/lib/score"
+import { band, fmt, barPct, DEFAULT_KATEGORI, type Kategori } from "@/lib/score"
 import { Avatar } from "@/components/Avatar"
 import { LhekLink } from "@/components/LhekLink"
+import { BodKategoriCell } from "@/components/BodKategoriCell"
 
 type SortKey = "skor-desc" | "skor-asc" | "nama" | "entitas"
 export type SkorStatus = "ALL" | "ADA" | "BELUM"
@@ -13,11 +14,15 @@ export type SkorStatus = "ALL" | "ADA" | "BELUM"
 export function RekapExplorer({
   rows,
   entitasList,
+  kategori = DEFAULT_KATEGORI,
+  canEdit = false,
   skorStatus = "ALL",
   setSkorStatus,
 }: {
   rows: RekapRow[]
   entitasList: string[]
+  kategori?: Kategori[]
+  canEdit?: boolean
   skorStatus?: SkorStatus
   setSkorStatus?: (s: SkorStatus) => void
 }) {
@@ -108,7 +113,7 @@ export function RekapExplorer({
 
       {/* Tabel */}
       <div className="mt-5 overflow-x-auto">
-        <table className="w-full min-w-[820px] border-collapse text-sm">
+        <table className="w-full min-w-[980px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-slate-900/[0.08] text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
               <th className="py-2.5 pr-3 font-semibold">Nama & Jabatan</th>
@@ -116,12 +121,13 @@ export function RekapExplorer({
               <th className="py-2.5 pr-3 font-semibold">Status</th>
               <th className="py-2.5 pr-3 text-right font-semibold">Bulan</th>
               <th className="py-2.5 pr-3 font-semibold">Skor</th>
-              <th className="py-2.5 font-semibold">Kategori</th>
+              <th className="py-2.5 pr-3 font-semibold">Kategori (Sistem)</th>
+              <th className="py-2.5 font-semibold">Kategori (BOD)</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((r, i) => {
-              const b = band(r.skor)
+              const b = band(r.skor, kategori)
               return (
                 <tr key={`${r.status}-${r.no}-${i}`} className="border-b border-slate-900/[0.05] align-top transition-colors hover:bg-paper/70">
                   <td className="py-3 pr-3">
@@ -153,14 +159,17 @@ export function RekapExplorer({
                       </span>
                     </div>
                   </td>
-                  <td className="py-3">
+                  <td className="py-3 pr-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${b.chip}`}>{b.label}</span>
+                  </td>
+                  <td className="py-3">
+                    <BodKategoriCell id={r.id} skor={r.skor} kategoriBod={r.kategoriBod} kategori={kategori} canEdit={canEdit} />
                   </td>
                 </tr>
               )
             })}
             {filtered.length === 0 && (
-              <tr><td colSpan={6} className="py-10 text-center text-sm text-slate-400">Tidak ada data yang cocok dengan filter.</td></tr>
+              <tr><td colSpan={7} className="py-10 text-center text-sm text-slate-400">Tidak ada data yang cocok dengan filter.</td></tr>
             )}
           </tbody>
         </table>

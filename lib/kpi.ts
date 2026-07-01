@@ -89,6 +89,49 @@ export async function kpiPejabat(nama: string, tahun = 2025): Promise<KpiPejabat
   }))
 }
 
+// ── Rincian Realisasi Capaian KPI per entitas (untuk menu pengelolaan) ──
+// Nilai realisasi/target/%capaian bersifat per-entitas (sama untuk semua pejabat
+// di entitas itu); di-dedup dari kpi_pejabat.
+export type KpiRealisasiRow = {
+  entitas: string
+  perspektif: string | null
+  indikator: string
+  satuan: string | null
+  target: string | null
+  realisasi: string | null
+  capaian: string | null
+  polaritas: string | null
+}
+
+export async function kpiRealisasiRows(): Promise<KpiRealisasiRow[]> {
+  if (!db) return []
+  // kpi_pejabat bisa > 1000 baris → ambil bertahap
+  const all: (KpiRealisasiRow & { urut: number })[] = []
+  const page = 1000
+  for (let from = 0; ; from += page) {
+    const { data, error } = await db
+      .from("kpi_pejabat")
+      .select("entitas, perspektif, indikator, satuan, target, realisasi, capaian, polaritas, urut")
+      .order("entitas").order("urut").order("indikator")
+      .range(from, from + page - 1)
+    if (error || !data || data.length === 0) break
+    all.push(...(data as (KpiRealisasiRow & { urut: number })[]))
+    if (data.length < page) break
+  }
+  const seen = new Set<string>()
+  const out: KpiRealisasiRow[] = []
+  for (const r of all) {
+    const key = `${r.entitas}||${r.indikator}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push({
+      entitas: r.entitas, perspektif: r.perspektif, indikator: r.indikator, satuan: r.satuan,
+      target: r.target, realisasi: r.realisasi, capaian: r.capaian, polaritas: r.polaritas,
+    })
+  }
+  return out
+}
+
 // Set KPI yang mencakup salah satu entitas (untuk halaman pejabat), beserta item.
 export async function kpiForEntitas(list: (string | null)[]): Promise<{ set: KpiSet; items: KpiItem[] }[]> {
   const ents = Array.from(new Set(list.filter(Boolean))) as string[]

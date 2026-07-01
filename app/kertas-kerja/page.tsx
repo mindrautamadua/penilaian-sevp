@@ -1,11 +1,12 @@
 import { Header, Aurora } from "@/components/Header"
 import { KertasKerjaTable } from "@/components/KertasKerjaTable"
 import { getKertasKerja } from "@/lib/data"
+import { getKategori } from "@/lib/kategori"
 
 export const dynamic = "force-dynamic"
 
 export default async function KertasKerjaPage() {
-  const rows = await getKertasKerja()
+  const [rows, kategori] = await Promise.all([getKertasKerja(), getKategori()])
   const entitasList = Array.from(new Set(rows.map((r) => r.entitas).filter(Boolean))).sort() as string[]
 
   return (
@@ -21,7 +22,7 @@ export default async function KertasKerjaPage() {
           </p>
         </div>
         <div className="anim-rise-1 mt-7">
-          <KertasKerjaTable rows={rows} entitasList={entitasList} />
+          <KertasKerjaTable rows={rows} entitasList={entitasList} kategori={kategori} />
         </div>
       </main>
     </>

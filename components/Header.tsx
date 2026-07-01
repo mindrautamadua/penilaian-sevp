@@ -13,7 +13,9 @@ const nav = [
 // Header aplikasi — dipakai di semua halaman.
 export async function Header({ active }: { active?: string }) {
   const user = await findUser((await cookies()).get("sevp_auth")?.value)
-  const items = user?.role === "admin" ? [...nav, { href: "/kelola", label: "Kelola Pejabat" }] : nav
+  const items = user?.role === "admin"
+    ? [...nav, { href: "/kelola", label: "Kelola Pejabat" }, { href: "/kategori", label: "Kategori Skor" }, { href: "/kpi-realisasi", label: "Realisasi KPI" }]
+    : nav
   return (
     <header className="sticky top-0 z-20 border-b border-slate-900/[0.06] bg-paper/80 backdrop-blur-xl no-print">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-3.5">

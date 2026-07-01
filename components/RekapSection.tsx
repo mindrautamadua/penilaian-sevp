@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ReactNode } from "react"
 import type { RekapRow, Summary } from "@/lib/data"
+import type { Kategori } from "@/lib/score"
 import { RekapExplorer, type SkorStatus } from "./RekapExplorer"
 
 function StatCard({
@@ -57,11 +58,15 @@ export function RekapSection({
   rows,
   summary,
   entitasList,
+  kategori,
+  canEdit = false,
   children,
 }: {
   rows: RekapRow[]
   summary: Summary
   entitasList: string[]
+  kategori?: Kategori[]
+  canEdit?: boolean
   children?: ReactNode
 }) {
   const [skorStatus, setSkorStatus] = useState<SkorStatus>("ALL")
@@ -116,7 +121,7 @@ export function RekapSection({
 
       {/* Rekap interaktif */}
       <div ref={rekapRef} className="anim-rise-2 mt-8 scroll-mt-6">
-        <RekapExplorer rows={rows} entitasList={entitasList} skorStatus={skorStatus} setSkorStatus={setSkorStatus} />
+        <RekapExplorer rows={rows} entitasList={entitasList} kategori={kategori} canEdit={canEdit} skorStatus={skorStatus} setSkorStatus={setSkorStatus} />
       </div>
     </>
   )

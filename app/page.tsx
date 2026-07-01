@@ -1,13 +1,21 @@
+import { cookies } from "next/headers"
 import { Header, Aurora } from "@/components/Header"
 import { RekapSection } from "@/components/RekapSection"
 import { Avatar } from "@/components/Avatar"
 import { getRekap, summarize, indukOf, type RekapRow } from "@/lib/data"
-import { band, fmt } from "@/lib/score"
+import { getKategori } from "@/lib/kategori"
+import { findUser } from "@/lib/auth"
+import { band, fmt, type Kategori } from "@/lib/score"
 
 export const dynamic = "force-dynamic"
 
 export default async function Dashboard() {
-  const rows = await getRekap()
+  const [rows, kategori, user] = await Promise.all([
+    getRekap(),
+    getKategori(),
+    findUser((await cookies()).get("sevp_auth")?.value),
+  ])
+  const canEdit = user?.role === "admin"
   const s = summarize(rows)
 
   const entitasList = Array.from(new Set(rows.map((r) => r.entitas).filter(Boolean))).sort() as string[]
@@ -41,12 +49,12 @@ export default async function Dashboard() {
         </div>
 
         {/* Statistik + Rekap interaktif (klik kartu untuk memfilter) */}
-        <RekapSection rows={rows} summary={s} entitasList={entitasList}>
+        <RekapSection rows={rows} summary={s} entitasList={entitasList} kategori={kategori} canEdit={canEdit}>
           {/* Tertinggi / Terendah */}
           {s.tertinggi && s.terendah && (
             <div className="anim-rise-1 mt-4 grid gap-4 sm:grid-cols-2">
-              <HighlightCard label="Skor Tertinggi" row={s.tertinggi} />
-              <HighlightCard label="Skor Terendah" row={s.terendah} />
+              <HighlightCard label="Skor Tertinggi" row={s.tertinggi} kategori={kategori} />
+              <HighlightCard label="Skor Terendah" row={s.terendah} kategori={kategori} />
             </div>
           )}
 
@@ -73,8 +81,8 @@ export default async function Dashboard() {
   )
 }
 
-function HighlightCard({ label, row }: { label: string; row: RekapRow }) {
-  const b = band(row.skor)
+function HighlightCard({ label, row, kategori }: { label: string; row: RekapRow; kategori: Kategori[] }) {
+  const b = band(row.skor, kategori)
   return (
     <div className="flex items-center justify-between gap-3 rounded-2xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm">
       <div className="flex min-w-0 items-center gap-3">

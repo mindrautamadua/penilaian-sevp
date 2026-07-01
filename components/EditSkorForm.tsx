@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react"
 import { updateRekapSkor, type EditState } from "@/app/actions"
-import { band, fmt, barPct } from "@/lib/score"
+import { band, fmt, barPct, DEFAULT_KATEGORI, type Kategori } from "@/lib/score"
 
 type Row = {
   id: number
@@ -15,10 +15,10 @@ type Row = {
 
 const initial: EditState = { ok: false }
 
-export function EditSkorForm({ row, canEdit }: { row: Row; canEdit: boolean }) {
+export function EditSkorForm({ row, canEdit, kategori = DEFAULT_KATEGORI }: { row: Row; canEdit: boolean; kategori?: Kategori[] }) {
   const [editing, setEditing] = useState(false)
   const [state, formAction, pending] = useActionState(updateRekapSkor, initial)
-  const b = band(row.skor)
+  const b = band(row.skor, kategori)
 
   // tutup mode edit setelah simpan berhasil (data sudah ter-revalidate)
   useEffect(() => {

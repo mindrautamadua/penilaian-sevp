@@ -26,7 +26,8 @@ create table if not exists rekap (
   status    text not null check (status in ('PKWT', 'PKWTT')),
   skor      numeric(8,4),      -- null = skor belum tersedia
   bulan     int,
-  catatan   text
+  catatan   text,
+  kategori_bod text            -- override kategori oleh BOD; null = ikuti kategori sistem
 );
 
 -- Akun aplikasi: username + password (di-hash scrypt). Sumber kebenaran login
@@ -104,6 +105,15 @@ create table if not exists kpi_pejabat (
   skor       numeric(10,4)         -- presisi penuh agar total cocok dgn skor final
 );
 create index if not exists idx_kpi_pejabat_nama on kpi_pejabat(nama, tahun);
+
+-- Kategori skor (Istimewa/Sangat Baik/dst) — ambang & warna dapat diatur admin.
+create table if not exists skor_kategori (
+  id        serial primary key,
+  urut      int not null default 0,
+  label     text not null,
+  batas_min numeric(6,2) not null,   -- skor >= batas_min → kategori ini (dicek dari tertinggi)
+  warna     text not null default 'slate'
+);
 
 -- Pejabat yang dikecualikan dari penilaian (disembunyikan dari dashboard & kertas kerja).
 create table if not exists pejabat_excluded (

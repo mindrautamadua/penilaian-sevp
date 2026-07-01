@@ -1,11 +1,17 @@
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 import { Header, Aurora } from "@/components/Header"
 import { KertasKerjaTable } from "@/components/KertasKerjaTable"
+import { findUser } from "@/lib/auth"
 import { getKertasKerja } from "@/lib/data"
 import { getKategori } from "@/lib/kategori"
 
 export const dynamic = "force-dynamic"
 
 export default async function KertasKerjaPage() {
+  const user = await findUser((await cookies()).get("sevp_auth")?.value)
+  if (!user || user.role !== "admin") redirect("/")
+
   const [rows, kategori] = await Promise.all([getKertasKerja(), getKategori()])
   const entitasList = Array.from(new Set(rows.map((r) => r.entitas).filter(Boolean))).sort() as string[]
 

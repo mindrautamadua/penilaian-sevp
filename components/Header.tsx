@@ -6,13 +6,13 @@ import { AdminMenu } from "@/components/AdminMenu"
 
 const nav = [
   { href: "/", label: "Dashboard" },
-  { href: "/kertas-kerja", label: "Kertas Kerja" },
   { href: "/lhek", label: "LHEK" },
-  { href: "/laporan", label: "Laporan PDF" },
+  { href: "/laporan", label: "Laporan Akhir" },
 ]
 
 // Menu administratif — dikelompokkan dalam dropdown "Admin".
 const adminNav = [
+  { href: "/kertas-kerja", label: "Kertas Kerja" },
   { href: "/kelola", label: "Kelola Pejabat" },
   { href: "/kategori", label: "Kategori Skor" },
   { href: "/kpi-realisasi", label: "Realisasi KPI" },

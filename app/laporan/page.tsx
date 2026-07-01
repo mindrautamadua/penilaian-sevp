@@ -29,7 +29,7 @@ export default async function LaporanPage() {
         {/* Toolbar (tidak ikut tercetak) */}
         <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <span className="eyebrow bg-primary/10 text-primary">Laporan Cetak</span>
+            <span className="eyebrow bg-primary/10 text-primary">Laporan Akhir</span>
             <p className="mt-2 text-sm text-slate-500">Format A4 · siap diunduh sebagai PDF (Save as PDF di dialog cetak).</p>
           </div>
           <PrintButton />
@@ -42,7 +42,7 @@ export default async function LaporanPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">PTPN Group · Tahun Kinerja 2025</p>
-                <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-navy">Laporan Penilaian Region Head &amp; SEVP</h1>
+                <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-navy">Laporan Akhir Penilaian Region Head &amp; SEVP</h1>
                 <p className="mt-1 text-sm text-slate-500">Rekapitulasi skor kinerja — satu skor per pejabat (terbobot masa jabatan)</p>
               </div>
               <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-navy text-xs font-bold text-white">SEVP</span>

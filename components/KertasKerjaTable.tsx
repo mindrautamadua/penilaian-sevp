@@ -69,7 +69,7 @@ export function KertasKerjaTable({ rows, entitasList, kategori = DEFAULT_KATEGOR
                       <Avatar src={r.foto} name={r.nama} size={36} />
                       <div className="min-w-0">
                         <div className="font-semibold text-navy">
-                          <Link href={`/pejabat/${encodeURIComponent(r.nama)}`} className="hover:text-primary hover:underline">{r.nama}</Link>
+                          <Link href={`/pejabat/${encodeURIComponent(r.nama)}`} scroll={false} className="hover:text-primary hover:underline">{r.nama}</Link>
                         </div>
                         <div className="text-xs text-slate-500">{r.jabatan}</div>
                         {r.keterangan && <div className="mt-1 text-[11px] italic text-slate-400">{r.keterangan}</div>}

@@ -26,11 +26,12 @@ export const viewport: Viewport = {
   themeColor: "#2A1A47",
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children, modal }: { children: React.ReactNode; modal: React.ReactNode }) {
   return (
     <html lang="id" className={`${sans.variable} ${mono.variable}`}>
       <body className="font-sans">
         {children}
+        {modal}
         <ServiceWorkerRegister />
       </body>
     </html>

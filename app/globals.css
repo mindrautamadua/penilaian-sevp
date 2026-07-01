@@ -46,7 +46,19 @@ body {
   .drift-a { animation: hcos-drift-a 22s ease-in-out infinite; will-change: transform; }
   .drift-b { animation: hcos-drift-b 28s ease-in-out infinite; will-change: transform; }
   .drift-c { animation: hcos-drift-c 25s ease-in-out infinite; will-change: transform; }
+
+  /* Modal masuk — backdrop fade + panel naik & skala halus */
+  @keyframes sevp-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sevp-panel-in {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); filter: blur(3px); }
+    to   { opacity: 1; transform: none; filter: blur(0); }
+  }
+  .modal-backdrop-in { animation: sevp-backdrop-in 0.22s ease-out both; }
+  .modal-panel-in { animation: sevp-panel-in 0.34s cubic-bezier(0.32, 0.72, 0, 1) both; }
 }
+
+/* Skeleton pengganti isi modal muncul instan setelah cangkang modal (fallback Suspense). */
+.modal-panel-in { transform-origin: center top; }
 
 @media print {
   @page { size: A4; margin: 12mm; }

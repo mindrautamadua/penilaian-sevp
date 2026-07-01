@@ -7,6 +7,7 @@ import { band, fmt, barPct, DEFAULT_KATEGORI, type Kategori } from "@/lib/score"
 import { Avatar } from "@/components/Avatar"
 import { LhekLink } from "@/components/LhekLink"
 import { BodKategoriCell } from "@/components/BodKategoriCell"
+import { LinkPending } from "@/components/LinkPending"
 
 type SortKey = "skor-desc" | "skor-asc" | "nama" | "entitas"
 export type SkorStatus = "ALL" | "ADA" | "BELUM"
@@ -153,12 +154,19 @@ export function RekapExplorer({
                       <Avatar src={r.foto} name={r.nama} size={40} />
                       <div className="min-w-0">
                         <span className="flex items-center gap-1.5">
-                          <Link href={`/pejabat/${encodeURIComponent(r.nama)}`} className="font-semibold text-navy hover:text-primary hover:underline">{r.nama}</Link>
-                          {r.lhek && r.bulan === 12 && (
+                          <Link href={`/pejabat/${encodeURIComponent(r.nama)}`} scroll={false} className="font-semibold text-navy hover:text-primary hover:underline">{r.nama}<LinkPending /></Link>
+                          {r.lhek && r.bulan === 12 ? (
                             <span title={`Terverifikasi · LHEK ada & masa jabatan genap 12 bulan · ${r.lhek.judul}`} className="inline-flex shrink-0 text-emerald-600" aria-label="Terverifikasi: LHEK ada dan masa jabatan genap 12 bulan">
                               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                                 <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
                                 <path d="m9 12 2 2 4-4" />
+                              </svg>
+                            </span>
+                          ) : (
+                            <span title={`Belum terverifikasi · perlu Evident LHEK & masa jabatan genap 12 bulan${!r.lhek ? " · LHEK belum ada" : ""}${r.bulan !== 12 ? " · masa jabatan bukan 12 bulan" : ""}`} className="inline-flex shrink-0 text-rose-600" aria-label="Belum terverifikasi">
+                              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                                <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
+                                <line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
                               </svg>
                             </span>
                           )}
@@ -175,7 +183,9 @@ export function RekapExplorer({
                           )}
                         </span>
                         <div className="text-xs text-slate-500">{r.jabatan}</div>
-                        {r.catatan && <div className="mt-1 text-[11px] italic text-slate-400">{r.catatan}</div>}
+                        {r.catatan && !/^(rangkap|gabungan)/i.test(r.catatan.trim()) && (
+                          <div className="mt-1 text-[11px] italic text-slate-400">{r.catatan}</div>
+                        )}
                         <LhekLink lhek={r.lhek} />
                       </div>
                     </div>

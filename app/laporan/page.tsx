@@ -56,13 +56,13 @@ export default async function LaporanPage() {
               <Stat label="Total Pejabat" value={String(s.total)} sub={`${s.pkwt} PKWT · ${s.pkwtt} PKWTT`} />
               <Stat label="Sudah Dinilai" value={String(s.dinilai)} sub={`${s.belum} belum`} />
               <Stat label="Rata-rata Skor" value={fmt(s.rataRata)} />
-              <Stat label="Jumlah Entitas" value={String(s.entitas)} />
+              <Stat label="Jumlah Unit Penilaian" value={String(s.entitas)} />
             </div>
           </section>
 
           {/* Tabel per entitas */}
           <section className="mt-7">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">Rincian per Entitas</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">Rincian per Unit Penilaian</h2>
             {grup.map(([entitas, list]) => (
               <div key={entitas} className="avoid-break mt-5">
                 <div className="flex items-baseline justify-between border-b border-slate-200 pb-1.5">

@@ -125,7 +125,7 @@ export default async function PejabatPage({ params }: { params: Promise<{ nama: 
                 <thead>
                   <tr className="text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400 border-b border-slate-200">
                     <th className="py-1.5 pr-2 font-semibold">Jabatan</th>
-                    <th className="py-1.5 pr-2 font-semibold">Entitas</th>
+                    <th className="py-1.5 pr-2 font-semibold">Unit Penilaian</th>
                     <th className="py-1.5 pr-2 font-semibold">Periode</th>
                     <th className="py-1.5 pr-2 text-right font-semibold">Hari</th>
                     <th className="py-1.5 pr-2 text-right font-semibold">Bln</th>

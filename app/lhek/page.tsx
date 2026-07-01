@@ -32,15 +32,15 @@ export default async function LhekPage() {
           <span className="eyebrow bg-grad-teal text-white shadow-soft">Referensi</span>
           <h1 className="h-display mt-3 text-3xl sm:text-4xl">Dokumen LHEK</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-500">
-            Laporan Hasil Evaluasi Kinerja per entitas — menjadi referensi penilaian Direktur &amp; SEVP. Tautan dokumen
-            muncul otomatis di halaman pejabat sesuai entitasnya.
+            Laporan Hasil Evaluasi Kinerja per unit penilaian — menjadi referensi penilaian Direktur &amp; SEVP. Regional
+            mengacu pada LHEK PTPN induknya. Tautan dokumen muncul otomatis di halaman pejabat sesuai unitnya.
           </p>
         </div>
 
         {/* Ringkasan cakupan entitas */}
         <div className="anim-rise-1 mt-7 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Total Entitas</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Total Unit Penilaian</p>
             <p className="data mt-2 text-3xl font-extrabold tracking-tightest text-navy">{entitasList.length}</p>
           </div>
           <div className="rounded-2xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm">
@@ -55,7 +55,7 @@ export default async function LhekPage() {
 
         {belum.length > 0 && (
           <div className="anim-rise-1 mt-4 rounded-2xl bg-rose-50/70 p-5 ring-1 ring-rose-200/70">
-            <p className="text-sm font-semibold text-rose-700">{belum.length} entitas belum memiliki dokumen LHEK:</p>
+            <p className="text-sm font-semibold text-rose-700">{belum.length} unit penilaian belum memiliki dokumen LHEK:</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {belum.map((e) => (
                 <span key={e} className="inline-flex rounded-md bg-white px-2.5 py-1 text-[11px] font-semibold text-rose-700 ring-1 ring-rose-200">{e}</span>
@@ -67,7 +67,7 @@ export default async function LhekPage() {
         {/* KPI Kolegial */}
         <div className="anim-rise-2 mt-8">
           <h2 className="text-lg font-bold tracking-tight text-navy">KPI Kolegial <span className="data text-sm font-medium text-slate-400">({kpiSets.length})</span></h2>
-          <p className="mt-1 text-sm text-slate-500">Skor KPI per entitas — tampil tanpa membuka dokumen.</p>
+          <p className="mt-1 text-sm text-slate-500">Skor KPI per unit penilaian — tampil tanpa membuka dokumen.</p>
 
           <div className="mt-3 grid gap-3">
             {kpiSets.map((s) => (

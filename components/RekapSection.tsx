@@ -114,7 +114,7 @@ export function RekapSection({
           }
         />
         <StatCard label="Rata-rata Skor" value={summary.rataRata} decimals={2} sub={`dari ${summary.dinilai} pejabat dinilai`} />
-        <StatCard label="Jumlah Entitas" value={summary.entitas} sub="penugasan PTPN Group" />
+        <StatCard label="Jumlah Unit Penilaian" value={summary.entitas} sub="penugasan PTPN Group" />
       </div>
 
       {children}

@@ -31,7 +31,7 @@ export function LhekUploadForm({ entitasList, tahunDefault = 2025 }: { entitasLi
     <section className="rounded-3xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm sm:p-6">
       <span className="eyebrow bg-primary/10 text-primary">Unggah</span>
       <h2 className="mt-2 text-lg font-bold tracking-tight text-navy">Tambah Dokumen LHEK</h2>
-      <p className="mt-1 text-sm text-slate-500">Unggah PDF LHEK lalu pilih entitas yang dicakup (boleh lebih dari satu).</p>
+      <p className="mt-1 text-sm text-slate-500">Unggah PDF LHEK lalu pilih unit penilaian yang dicakup (boleh lebih dari satu).</p>
 
       <form ref={formRef} action={formAction} className="mt-5 grid gap-4">
         <div className="grid gap-4 sm:grid-cols-[1fr_120px]">
@@ -52,7 +52,7 @@ export function LhekUploadForm({ entitasList, tahunDefault = 2025 }: { entitasLi
         </div>
 
         <div>
-          <span className="block text-sm font-medium text-slate-700">Entitas yang dicakup <span className="text-slate-400">({picked.size} dipilih)</span></span>
+          <span className="block text-sm font-medium text-slate-700">Unit Penilaian yang dicakup <span className="text-slate-400">({picked.size} dipilih)</span></span>
           <div className="mt-2 grid max-h-56 grid-cols-1 gap-1.5 overflow-y-auto rounded-xl bg-paper p-3 ring-1 ring-slate-900/[0.06] sm:grid-cols-2">
             {entitasList.map((e) => (
               <label key={e} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-white">

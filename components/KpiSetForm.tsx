@@ -41,7 +41,7 @@ export function KpiSetForm({ entitasList, tahunDefault = 2025 }: { entitasList: 
           </div>
         </div>
         <div>
-          <span className="block text-sm font-medium text-slate-700">Entitas yang dicakup <span className="text-slate-400">({picked.size})</span></span>
+          <span className="block text-sm font-medium text-slate-700">Unit Penilaian yang dicakup <span className="text-slate-400">({picked.size})</span></span>
           <div className="mt-2 grid max-h-48 grid-cols-1 gap-1.5 overflow-y-auto rounded-xl bg-paper p-3 ring-1 ring-slate-900/[0.06] sm:grid-cols-2">
             {entitasList.map((e) => (
               <label key={e} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm text-slate-700 hover:bg-white">

@@ -25,14 +25,14 @@ export default async function KpiRealisasiPage() {
           <span className="eyebrow bg-grad-teal text-white shadow-soft">Admin</span>
           <h1 className="h-display mt-3 text-3xl sm:text-4xl">Rincian Realisasi Capaian KPI</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-500">
-            Kelola nilai <strong>realisasi</strong> &amp; <strong>% capaian</strong> tiap indikator KPI per entitas.
-            Perubahan berlaku untuk semua pejabat pada entitas tersebut dan langsung tampil di halaman detail pejabat.
+            Kelola nilai <strong>realisasi</strong> &amp; <strong>% capaian</strong> tiap indikator KPI per unit penilaian.
+            Perubahan berlaku untuk semua pejabat pada unit penilaian tersebut dan langsung tampil di halaman detail pejabat.
           </p>
         </div>
 
         <div className="anim-rise-1 mt-7 grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Entitas</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Unit Penilaian</p>
             <p className="data mt-2 text-3xl font-extrabold tracking-tightest text-navy">{entitasList.length}</p>
           </div>
           <div className="rounded-2xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm">

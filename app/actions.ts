@@ -166,7 +166,7 @@ export async function uploadLhek(_prev: EditState, formData: FormData): Promise<
   const file = formData.get("file")
 
   if (!judul) return { ok: false, error: "Judul wajib diisi." }
-  if (entitas.length === 0) return { ok: false, error: "Pilih minimal satu entitas." }
+  if (entitas.length === 0) return { ok: false, error: "Pilih minimal satu unit penilaian." }
   if (!(file instanceof File) || file.size === 0) return { ok: false, error: "File PDF wajib diunggah." }
   if (file.type && file.type !== "application/pdf") return { ok: false, error: "File harus berformat PDF." }
   if (file.size > 10 * 1024 * 1024) return { ok: false, error: "Ukuran file maksimal 10 MB." }
@@ -262,7 +262,7 @@ export async function updateKpiRealisasi(_prev: EditState, formData: FormData): 
 
   const entitas = String(formData.get("entitas") ?? "").trim()
   const indikator = String(formData.get("indikator") ?? "").trim()
-  if (!entitas || !indikator) return { ok: false, error: "Entitas/indikator tidak valid." }
+  if (!entitas || !indikator) return { ok: false, error: "Unit penilaian/indikator tidak valid." }
 
   const val = (k: string) => {
     const v = String(formData.get(k) ?? "").trim()
@@ -335,7 +335,7 @@ export async function createKpiSet(_prev: EditState, formData: FormData): Promis
   const entitas = formData.getAll("entitas").map((e) => String(e)).filter(Boolean)
   const tahunRaw = String(formData.get("tahun") ?? "").trim()
   if (!judul) return { ok: false, error: "Judul wajib diisi." }
-  if (entitas.length === 0) return { ok: false, error: "Pilih minimal satu entitas." }
+  if (entitas.length === 0) return { ok: false, error: "Pilih minimal satu unit penilaian." }
   let tahun = 2025
   if (tahunRaw !== "") {
     tahun = Number(tahunRaw)
@@ -426,21 +426,22 @@ export async function saveKpiItems(_prev: EditState, formData: FormData): Promis
 
 // Set/hapus override kategori BOD untuk satu baris rekap. Hanya admin.
 // label kosong = ikuti kategori sistem (kolom di-null-kan).
-export async function setKategoriBod(formData: FormData): Promise<void> {
+// Dipanggil langsung dari klien (BodKategoriCell) secara optimistik.
+// Sengaja TANPA revalidatePath: sel memperbarui tampilannya sendiri, jadi tak
+// perlu re-render seluruh halaman (yang menghapus filter/scroll & terasa refresh).
+export async function setKategoriBod(id: number, label: string, sistem: string): Promise<{ ok: boolean }> {
   const store = await cookies()
   const user = await findUser(store.get("sevp_auth")?.value)
-  if (!user || user.role !== "admin" || !db) return
+  if (!user || user.role !== "admin" || !db) return { ok: false }
 
-  const id = Number(formData.get("id"))
-  if (!Number.isInteger(id) || id <= 0) return
+  if (!Number.isInteger(id) || id <= 0) return { ok: false }
 
-  const label = String(formData.get("label") ?? "").trim()
-  const sistem = String(formData.get("sistem") ?? "").trim()
+  const l = label.trim()
+  const s = sistem.trim()
   // kosong atau sama dengan kategori sistem → hapus override (kembali ikut sistem)
-  const value = label === "" || label === sistem ? null : label
-  await db.from("rekap").update({ kategori_bod: value }).eq("id", id)
-
-  revalidatePath("/", "layout")
+  const value = l === "" || l === s ? null : l
+  const { error } = await db.from("rekap").update({ kategori_bod: value }).eq("id", id)
+  return { ok: !error }
 }
 
 // ── Kategori skor (Istimewa/Sangat Baik/dst) ──

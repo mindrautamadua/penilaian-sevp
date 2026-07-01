@@ -2,6 +2,7 @@ import Link from "next/link"
 import { cookies } from "next/headers"
 import { logout } from "@/app/actions"
 import { findUser } from "@/lib/auth"
+import { AdminMenu } from "@/components/AdminMenu"
 
 const nav = [
   { href: "/", label: "Dashboard" },
@@ -10,12 +11,17 @@ const nav = [
   { href: "/laporan", label: "Laporan PDF" },
 ]
 
+// Menu administratif — dikelompokkan dalam dropdown "Admin".
+const adminNav = [
+  { href: "/kelola", label: "Kelola Pejabat" },
+  { href: "/kategori", label: "Kategori Skor" },
+  { href: "/kpi-realisasi", label: "Realisasi KPI" },
+]
+
 // Header aplikasi — dipakai di semua halaman.
 export async function Header({ active }: { active?: string }) {
   const user = await findUser((await cookies()).get("sevp_auth")?.value)
-  const items = user?.role === "admin"
-    ? [...nav, { href: "/kelola", label: "Kelola Pejabat" }, { href: "/kategori", label: "Kategori Skor" }, { href: "/kpi-realisasi", label: "Realisasi KPI" }]
-    : nav
+  const isAdmin = user?.role === "admin"
   return (
     <header className="sticky top-0 z-20 border-b border-slate-900/[0.06] bg-paper/80 backdrop-blur-xl no-print">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-3.5">
@@ -32,7 +38,7 @@ export async function Header({ active }: { active?: string }) {
         </Link>
 
         <nav className="flex shrink-0 items-center gap-1.5">
-          {items.map((item) => {
+          {nav.map((item) => {
             const on = item.href === active
             return (
               <Link
@@ -48,6 +54,8 @@ export async function Header({ active }: { active?: string }) {
               </Link>
             )
           })}
+
+          {isAdmin && <AdminMenu items={adminNav} active={active} />}
 
           {user && (
             <div className="ml-1.5 flex items-center gap-2 border-l border-slate-900/[0.08] pl-2.5">

@@ -40,7 +40,7 @@ export function KertasKerjaTable({ rows, entitasList, kategori = DEFAULT_KATEGOR
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari nama / jabatan…" className="rounded-xl border-0 bg-paper px-3.5 py-2.5 text-sm text-ink shadow-inner ring-1 ring-slate-900/[0.06] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-steel" />
         <select value={entitas} onChange={(e) => setEntitas(e.target.value)} className="rounded-xl border-0 bg-paper px-3.5 py-2.5 text-sm text-ink shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel">
-          <option value="ALL">Semua Entitas</option>
+          <option value="ALL">Semua Unit Penilaian</option>
           {entitasList.map((e) => <option key={e} value={e}>{e}</option>)}
         </select>
       </div>
@@ -51,7 +51,7 @@ export function KertasKerjaTable({ rows, entitasList, kategori = DEFAULT_KATEGOR
             <tr className="border-b border-slate-900/[0.08] text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
               <th className="py-2.5 pr-3 font-semibold">No</th>
               <th className="py-2.5 pr-3 font-semibold">Nama & Jabatan</th>
-              <th className="py-2.5 pr-3 font-semibold">Entitas</th>
+              <th className="py-2.5 pr-3 font-semibold">Unit Penilaian</th>
               <th className="py-2.5 pr-3 font-semibold">Periode Menjabat</th>
               <th className="py-2.5 pr-3 text-right font-semibold">Hari</th>
               <th className="py-2.5 pr-3 text-right font-semibold">Bulan</th>

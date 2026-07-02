@@ -43,7 +43,7 @@ export default async function LaporanPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">PTPN Group · Tahun Kinerja 2025</p>
-                <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-navy">Laporan Akhir Penilaian Region Head &amp; SEVP</h1>
+                <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-navy">Laporan Akhir Penilaian Direktur, Region Head &amp; SEVP</h1>
                 <p className="mt-1 text-sm text-slate-500">Rekapitulasi skor kinerja — satu skor per pejabat (terbobot masa jabatan)</p>
               </div>
               <BrandMonogram className="h-12 w-12 shrink-0 bg-navy text-white" />

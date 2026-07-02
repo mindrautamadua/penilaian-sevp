@@ -2,6 +2,7 @@ import { db, hasDb } from "./supabase"
 import { photoFor } from "./photos"
 import { lhekMapByEntitas, type LhekRef } from "./lhek"
 import { getRiwayat, riwayatNamaSet, latestGradeMap, latestGolonganMap, type RiwayatRow } from "./riwayat"
+import { kolegialTotalByEntitas } from "./kpi"
 import raw from "@/db/data.json"
 
 export type RekapRow = {
@@ -23,7 +24,11 @@ export type RekapRow = {
   phdpDefault: string | null   // Golongan PhDP terakhir dari riwayat (default tampilan)
   personGrade: string | null   // usulan Person Grade 2025 (tersimpan)
   personGradeDefault: string | null  // Person Grade terakhir dari riwayat (default tampilan)
+  skorKolegial: boolean        // skor berasal dari KPI Kolegial LHEK (Direktur)
 }
+
+// Direktur dinilai kolegial: skor = total KPI Kolegial entitas (dari LHEK).
+const isDirektur = (jabatan: string | null): boolean => /direktur|direksi/i.test(jabatan ?? "")
 
 export type KertasRow = {
   id: number
@@ -45,19 +50,23 @@ const n = (v: unknown): number | null => (v == null ? null : Number(v))
 
 type DataOpts = { includeExcluded?: boolean }
 
-// Nama pejabat yang total bulan seluruh penugasannya > 12 → menjabat bersamaan (rangkap).
-async function rangkapSet(): Promise<Set<string>> {
-  if (!db) {
-    return sumBulanOver12((raw.kertas_kerja as { nama: string; bulan: number | null }[]))
-  }
-  const { data } = await db.from("kertas_kerja").select("nama, bulan")
-  return sumBulanOver12((data ?? []) as { nama: string; bulan: number | null }[])
-}
-
-function sumBulanOver12(rows: { nama: string; bulan: number | null }[]): Set<string> {
+// Agregasi kertas kerja per nama (satu query):
+// - rangkap: total bulan seluruh penugasan > 12 → menjabat bersamaan
+// - bulanMax: masa jabatan terpanjang (dipakai sbg fallback bulan bila rekap null, mis. Direktur)
+type KkAgg = { rangkap: Set<string>; bulanMax: Record<string, number> }
+async function kkAgg(): Promise<KkAgg> {
+  const rows = (db
+    ? ((await db.from("kertas_kerja").select("nama, bulan")).data ?? [])
+    : (raw.kertas_kerja as unknown[])) as { nama: string; bulan: number | null }[]
   const total = new Map<string, number>()
-  for (const r of rows) total.set(r.nama, (total.get(r.nama) ?? 0) + (Number(r.bulan) || 0))
-  return new Set([...total].filter(([, b]) => b > 12).map(([nama]) => nama))
+  const bulanMax: Record<string, number> = {}
+  for (const r of rows) {
+    const b = Number(r.bulan) || 0
+    total.set(r.nama, (total.get(r.nama) ?? 0) + b)
+    if (b > (bulanMax[r.nama] ?? 0)) bulanMax[r.nama] = b
+  }
+  const rangkap = new Set([...total].filter(([, b]) => b > 12).map(([nama]) => nama))
+  return { rangkap, bulanMax }
 }
 
 // ── Pejabat yang dikecualikan dari penilaian ──
@@ -78,7 +87,7 @@ async function excludedSet(): Promise<Set<string>> {
 
 export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
   if (hasDb && db) {
-    const [res, lhekMap, excluded, rangkap, riwayat, gradeDefault, golonganDefault] = await Promise.all([
+    const [res, lhekMap, excluded, kk, riwayat, gradeDefault, golonganDefault, kolegial] = await Promise.all([
       db
         .from("rekap")
         .select("id, no, nama, entitas, jabatan, status, skor, bulan, catatan, kategori_bod, phdp, person_grade")
@@ -87,19 +96,38 @@ export async function getRekap(opts: DataOpts = {}): Promise<RekapRow[]> {
         .order("no"),
       lhekMapByEntitas(),
       opts.includeExcluded ? Promise.resolve(new Set<string>()) : excludedSet(),
-      rangkapSet(),
+      kkAgg(),
       riwayatNamaSet(),
       latestGradeMap(),
       latestGolonganMap(),
+      kolegialTotalByEntitas(),
     ])
-    const rows = (res.data ?? []) as (Omit<RekapRow, "foto" | "lhek" | "rangkap" | "kategoriBod" | "hasRiwayat" | "personGrade" | "personGradeDefault" | "phdpDefault"> & { kategori_bod: string | null; person_grade: string | null })[]
+    const rows = (res.data ?? []) as (Omit<RekapRow, "foto" | "lhek" | "rangkap" | "kategoriBod" | "hasRiwayat" | "personGrade" | "personGradeDefault" | "phdpDefault" | "skorKolegial"> & { kategori_bod: string | null; person_grade: string | null })[]
     return rows
       .filter((r) => opts.includeExcluded || !excluded.has(r.nama))
-      .map(({ kategori_bod, person_grade, ...r }) => ({ ...r, skor: n(r.skor), foto: photoFor(r.nama), lhek: r.entitas ? lhekMap[r.entitas] ?? null : null, rangkap: rangkap.has(r.nama), kategoriBod: kategori_bod ?? null, hasRiwayat: riwayat.has(r.nama), personGrade: person_grade ?? null, personGradeDefault: gradeDefault[r.nama] ?? null, phdpDefault: golonganDefault[r.nama] ?? null }))
+      .map(({ kategori_bod, person_grade, ...r }) => {
+        const raw = n(r.skor)
+        // Direktur tanpa skor individu → pakai total KPI Kolegial entitas (dari LHEK).
+        const kol = raw == null && isDirektur(r.jabatan) && r.entitas ? kolegial[r.entitas] ?? null : null
+        return {
+          ...r,
+          skor: kol ?? raw,
+          skorKolegial: kol != null,
+          bulan: r.bulan ?? kk.bulanMax[r.nama] ?? null, // fallback masa jabatan dari kertas kerja (mis. Direktur)
+          foto: photoFor(r.nama),
+          lhek: r.entitas ? lhekMap[r.entitas] ?? null : null,
+          rangkap: kk.rangkap.has(r.nama),
+          kategoriBod: kategori_bod ?? null,
+          hasRiwayat: riwayat.has(r.nama),
+          personGrade: person_grade ?? null,
+          personGradeDefault: gradeDefault[r.nama] ?? null,
+          phdpDefault: golonganDefault[r.nama] ?? null,
+        }
+      })
   }
   // fallback (data.json tanpa id) → id sintetis berurutan
-  const rangkap = await rangkapSet()
-  return (raw.rekap as Omit<RekapRow, "id" | "foto" | "lhek" | "rangkap" | "kategoriBod" | "hasRiwayat" | "phdp" | "phdpDefault" | "personGrade" | "personGradeDefault">[]).map((r, i) => ({ ...r, id: i + 1, skor: n(r.skor), foto: photoFor(r.nama), lhek: null, rangkap: rangkap.has(r.nama), kategoriBod: null, hasRiwayat: false, phdp: null, phdpDefault: null, personGrade: null, personGradeDefault: null }))
+  const kk = await kkAgg()
+  return (raw.rekap as Omit<RekapRow, "id" | "foto" | "lhek" | "rangkap" | "kategoriBod" | "hasRiwayat" | "phdp" | "phdpDefault" | "personGrade" | "personGradeDefault" | "skorKolegial">[]).map((r, i) => ({ ...r, id: i + 1, skor: n(r.skor), bulan: r.bulan ?? kk.bulanMax[r.nama] ?? null, foto: photoFor(r.nama), lhek: null, rangkap: kk.rangkap.has(r.nama), kategoriBod: null, hasRiwayat: false, phdp: null, phdpDefault: null, personGrade: null, personGradeDefault: null, skorKolegial: false }))
 }
 
 export async function getKertasKerja(opts: DataOpts = {}): Promise<KertasRow[]> {

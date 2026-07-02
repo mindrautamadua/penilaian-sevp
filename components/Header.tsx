@@ -29,7 +29,7 @@ export async function Header({ active }: { active?: string }) {
         <Link href="/" className="flex min-w-0 items-center gap-3">
           <BrandMonogram className="h-9 w-9 shrink-0 bg-navy text-white shadow-soft ring-1 ring-white/10" />
           <span className="min-w-0">
-            <span className="block truncate text-sm font-bold tracking-tight text-navy">Penilaian RH &amp; SEVP</span>
+            <span className="block truncate text-sm font-bold tracking-tight text-navy">Penilaian Direktur, RH &amp; SEVP</span>
             <span className="block truncate text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
               PTPN Group · Tahun Kinerja 2025
             </span>
@@ -87,15 +87,15 @@ export async function Header({ active }: { active?: string }) {
 // Aurora gradient backdrop + MagicUI Particles (tidak ikut tercetak).
 export function Aurora() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden print:hidden">
-      <div className="drift-a absolute -left-28 -top-28 h-[520px] w-[520px] rounded-full bg-primary/[0.30] blur-[120px]" />
-      <div className="drift-b absolute right-[-6%] top-[4%] h-[460px] w-[460px] rounded-full bg-steel/25 blur-[120px]" />
-      <div className="drift-c absolute bottom-[-12%] left-[22%] h-[540px] w-[540px] rounded-full bg-violet-400/25 blur-[140px]" />
-      <div className="drift-a absolute bottom-[12%] right-[4%] h-[420px] w-[420px] rounded-full bg-mint/25 blur-[120px]" />
+    <div aria-hidden className="aurora-breathe pointer-events-none fixed inset-0 -z-10 overflow-hidden print:hidden">
+      <div className="drift-a absolute -left-28 -top-28 h-[520px] w-[520px] rounded-full bg-primary/[0.38] blur-[120px]" />
+      <div className="drift-b absolute right-[-6%] top-[4%] h-[460px] w-[460px] rounded-full bg-steel/35 blur-[120px]" />
+      <div className="drift-c absolute bottom-[-12%] left-[22%] h-[540px] w-[540px] rounded-full bg-violet-400/35 blur-[140px]" />
+      <div className="drift-a absolute bottom-[12%] right-[4%] h-[420px] w-[420px] rounded-full bg-mint/35 blur-[120px]" />
 
       {/* Sheen — pita cahaya diagonal menyapu perlahan melintasi layar */}
-      <div className="absolute -inset-y-1/2 left-0 w-[38%] overflow-visible">
-        <div className="sheen h-full w-full bg-gradient-to-r from-transparent via-white/40 to-transparent blur-2xl" />
+      <div className="absolute -inset-y-1/2 left-0 w-[44%] overflow-visible">
+        <div className="sheen h-full w-full bg-gradient-to-r from-transparent via-white/60 to-transparent blur-xl" />
       </div>
 
       {/* Grain halus — tekstur premium (statis, samar) */}

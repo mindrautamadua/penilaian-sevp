@@ -50,7 +50,7 @@ export function RiwayatPenilaian({ rows }: { rows: RiwayatRow[] }) {
         </table>
       </div>
       <p className="mt-2 text-[11px] text-slate-400">
-        Sumber: Rekapitulasi Penilaian Kinerja Region Head &amp; SEVP PTPN Group 2023 &amp; 2024.
+        Sumber: Rekapitulasi Penilaian Kinerja Direktur, Region Head &amp; SEVP PTPN Group 2023 &amp; 2024.
       </p>
     </section>
   )

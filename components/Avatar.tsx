@@ -9,12 +9,13 @@ function initials(name: string): string {
 }
 
 export function Avatar({
-  src, name, size = 40, className = "",
+  src, name, size = 40, className = "", objectPos = "center 22%",
 }: {
   src: string | null | undefined
   name: string
   size?: number
   className?: string
+  objectPos?: string // fokus crop; default sedikit ke atas agar wajah terlihat
 }) {
   const dim = { width: size, height: size }
   if (src) {
@@ -23,7 +24,7 @@ export function Avatar({
       <img
         src={src}
         alt={name}
-        style={dim}
+        style={{ ...dim, objectPosition: objectPos }}
         className={`shrink-0 rounded-full object-cover ring-1 ring-slate-900/[0.08] ${className}`}
       />
     )

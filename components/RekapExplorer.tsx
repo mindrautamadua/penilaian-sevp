@@ -13,6 +13,16 @@ import { LinkPending } from "@/components/LinkPending"
 type SortKey = "skor-desc" | "skor-asc" | "nama" | "entitas"
 export type SkorStatus = "ALL" | "ADA" | "BELUM"
 
+type Jenis = "Direktur" | "Region Head" | "SEVP" | "Lainnya"
+// Klasifikasi jenis jabatan dari teks jabatan (prioritas: Direktur > Region Head > SEVP).
+function jenisJabatan(jabatan: string | null): Jenis {
+  const j = (jabatan ?? "").toLowerCase()
+  if (j.includes("direktur") || j.includes("direksi")) return "Direktur"
+  if (j.includes("region head") || j.includes("regional head")) return "Region Head"
+  if (j.includes("sevp")) return "SEVP"
+  return "Lainnya"
+}
+
 export function RekapExplorer({
   rows,
   entitasList,
@@ -31,6 +41,7 @@ export function RekapExplorer({
   const [q, setQ] = useState("")
   const [status, setStatus] = useState<"ALL" | "PKWT" | "PKWTT">("ALL")
   const [entitas, setEntitas] = useState<string>("ALL")
+  const [jenis, setJenis] = useState<"ALL" | Jenis>("ALL")
   const [masa, setMasa] = useState<"ALL" | "LT12" | "FULL">("ALL")
   const [verif, setVerif] = useState<"ALL" | "YES" | "NO">("ALL")
   const [riwayat, setRiwayat] = useState<"ALL" | "YES" | "NO">("ALL")
@@ -43,6 +54,7 @@ export function RekapExplorer({
       if (skorStatus === "BELUM" && r.skor != null) return false
       if (status !== "ALL" && r.status !== status) return false
       if (entitas !== "ALL" && r.entitas !== entitas) return false
+      if (jenis !== "ALL" && jenisJabatan(r.jabatan) !== jenis) return false
       if (masa === "LT12" && !(r.bulan != null && r.bulan < 12)) return false
       if (masa === "FULL" && !(r.bulan != null && r.bulan >= 12)) return false
       // Terverifikasi = ada Evident LHEK & masa jabatan genap 12 bulan.
@@ -63,7 +75,7 @@ export function RekapExplorer({
       }
     })
     return out
-  }, [rows, q, status, entitas, masa, verif, riwayat, sort, skorStatus])
+  }, [rows, q, status, entitas, jenis, masa, verif, riwayat, sort, skorStatus])
 
   return (
     <section className="rounded-3xl bg-white/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] backdrop-blur-sm sm:p-6">
@@ -115,6 +127,12 @@ export function RekapExplorer({
           <option value="ALL">Semua Status</option>
           <option value="PKWT">PKWT</option>
           <option value="PKWTT">PKWTT</option>
+        </select>
+        <select value={jenis} onChange={(e) => setJenis(e.target.value as typeof jenis)} className="rounded-xl border-0 bg-paper px-3.5 py-2.5 text-sm text-ink shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel">
+          <option value="ALL">Semua Jenis Jabatan</option>
+          <option value="Direktur">Direktur</option>
+          <option value="Region Head">Region Head</option>
+          <option value="SEVP">SEVP</option>
         </select>
         <select value={masa} onChange={(e) => setMasa(e.target.value as typeof masa)} className="rounded-xl border-0 bg-paper px-3.5 py-2.5 text-sm text-ink shadow-inner ring-1 ring-slate-900/[0.06] focus:outline-none focus:ring-2 focus:ring-steel">
           <option value="ALL">Semua Masa Jabatan</option>
@@ -226,6 +244,9 @@ export function RekapExplorer({
                       <span className="h-1.5 w-12 overflow-hidden rounded-full bg-slate-900/[0.06]">
                         <span className={`block h-full rounded-full ${b.bar}`} style={{ width: `${barPct(r.skor)}%` }} />
                       </span>
+                      {r.skorKolegial && (
+                        <span title="Skor kolegial Direktur — dari total KPI Kolegial (LHEK) entitas" className="shrink-0 rounded bg-primary/10 px-1 py-0.5 text-[8px] font-bold uppercase tracking-wide text-primary">Kolegial</span>
+                      )}
                     </div>
                   </td>
                   <td className="py-3 pr-3">

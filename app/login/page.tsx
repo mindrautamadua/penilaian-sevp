@@ -17,17 +17,17 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <div className="relative flex items-center gap-3">
           <BrandMonogram className="h-10 w-10 bg-white/10 text-white ring-1 ring-white/15" />
           <div>
-            <p className="font-semibold">Penilaian RH &amp; SEVP</p>
+            <p className="font-semibold">Penilaian Direktur, RH &amp; SEVP</p>
             <p className="text-xs text-white/60">PTPN Group · Tahun Kinerja 2025</p>
           </div>
         </div>
 
         <div className="relative">
-          <h1 className="max-w-md text-3xl font-extrabold leading-[1.1] tracking-tightest">Penilaian Region Head &amp; SEVP dalam satu dasbor.</h1>
+          <h1 className="max-w-md text-3xl font-extrabold leading-[1.1] tracking-tightest">Penilaian Direktur, Region Head &amp; SEVP dalam satu dasbor.</h1>
           <p className="mt-3 max-w-sm text-sm text-white/70">Rekapitulasi skor kinerja PTPN Group — terbobot masa jabatan, satu skor per pejabat, siap diekspor PDF.</p>
         </div>
 
-        <p className="relative text-xs text-white/60">© 2025 Penilaian RH &amp; SEVP · PTPN Group.</p>
+        <p className="relative text-xs text-white/60">© 2025 Penilaian Direktur, RH &amp; SEVP · PTPN Group.</p>
       </aside>
 
       {/* Panel form */}
@@ -36,7 +36,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <div className="mb-8 flex items-center gap-3 lg:hidden">
             <BrandMonogram className="h-10 w-10 bg-navy text-white" />
             <div>
-              <p className="font-semibold text-navy">Penilaian RH &amp; SEVP</p>
+              <p className="font-semibold text-navy">Penilaian Direktur, RH &amp; SEVP</p>
               <p className="text-xs text-slate-500">PTPN Group · 2025</p>
             </div>
           </div>

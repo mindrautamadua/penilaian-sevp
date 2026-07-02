@@ -41,7 +41,7 @@ export default async function Dashboard() {
         {/* Hero */}
         <div className="anim-rise">
           <span className="eyebrow bg-grad-teal text-white shadow-soft">Tahun Kinerja 2025</span>
-          <h1 className="h-display mt-3 text-3xl sm:text-4xl">Penilaian Region Head &amp; SEVP</h1>
+          <h1 className="h-display mt-3 text-3xl sm:text-4xl">Penilaian Direktur, Region Head &amp; SEVP</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-500">
             Rekapitulasi skor kinerja PTPN Group berdasarkan kertas kerja penilaian — terbobot masa jabatan,
             disajikan satu skor per pejabat.

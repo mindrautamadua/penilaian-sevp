@@ -47,6 +47,15 @@ export async function listKpiSets(): Promise<KpiSetSummary[]> {
   })
 }
 
+// Peta entitas → total skor KPI Kolegial (dari LHEK). Dipakai sebagai skor
+// Direktur (dewan) yang dinilai secara kolegial di tingkat entitas.
+export async function kolegialTotalByEntitas(): Promise<Record<string, number>> {
+  const sets = await listKpiSets()
+  const map: Record<string, number> = {}
+  for (const s of sets) for (const e of s.entitas) if (!(e in map)) map[e] = s.total_skor
+  return map
+}
+
 export async function getKpiSet(id: number): Promise<{ set: KpiSet; items: KpiItem[] } | null> {
   if (!db) return null
   const setRes = await db.from("kpi_kolegial").select(SET_COLS).eq("id", id).maybeSingle()
